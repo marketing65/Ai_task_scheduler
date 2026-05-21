@@ -36,7 +36,11 @@ def export_tasks_to_google_sheet(tasks: list[TaskResponse], base_url: str = None
 
     try:
         # 1. Authenticate using Service Account credentials
-        gc = gspread.service_account(filename=settings.GOOGLE_SHEETS_CREDS_FILE)
+        creds_dict = settings.get_google_credentials()
+        if creds_dict:
+            gc = gspread.service_account_from_dict(creds_dict)
+        else:
+            gc = gspread.service_account(filename=settings.GOOGLE_SHEETS_CREDS_FILE)
 
         # 2. Open the spreadsheet by its ID/Key
         spreadsheet_id = settings.GOOGLE_SHEETS_SPREADSHEET_ID

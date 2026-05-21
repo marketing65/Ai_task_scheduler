@@ -57,6 +57,30 @@ class Settings(BaseSettings):
         default="app/ai-driven-task-scheduler-4a465b6fdc65.json",
         description="Path to Google Sheets Service Account credentials JSON",
     )
+    GOOGLE_TYPE: str = Field(
+        default="",
+        description="Type for Google Service Account credentials",
+    )
+    GOOGLE_PROJECT_ID: str = Field(
+        default="",
+        description="Project ID for Google Service Account",
+    )
+    GOOGLE_PRIVATE_KEY_ID: str = Field(
+        default="",
+        description="Private Key ID for Google Service Account",
+    )
+    GOOGLE_PRIVATE_KEY: str = Field(
+        default="",
+        description="Private Key for Google Service Account",
+    )
+    GOOGLE_CLIENT_EMAIL: str = Field(
+        default="",
+        description="Client Email for Google Service Account",
+    )
+    GOOGLE_CLIENT_ID: str = Field(
+        default="",
+        description="Client ID for Google Service Account",
+    )
     GOOGLE_DRIVE_FOLDER_ID: str = Field(
         default="",
         description="Optional Google Drive shared folder ID to upload attachments into",
@@ -68,6 +92,32 @@ class Settings(BaseSettings):
         default="",
         description="Optional public URL of the application to override localhost in exported links",
     )
+
+    def get_google_credentials(self) -> dict | None:
+        """
+        Constructs and returns Google Service Account credentials dictionary if individual
+        environment variables are provided. Returns None otherwise.
+        """
+        if self.GOOGLE_TYPE and self.GOOGLE_PROJECT_ID and self.GOOGLE_PRIVATE_KEY:
+            private_key = self.GOOGLE_PRIVATE_KEY
+            if private_key:
+                # Support unescaping backslash-n to actual newlines
+                private_key = private_key.replace("\\n", "\n")
+            
+            return {
+                "type": self.GOOGLE_TYPE,
+                "project_id": self.GOOGLE_PROJECT_ID,
+                "private_key_id": self.GOOGLE_PRIVATE_KEY_ID,
+                "private_key": private_key,
+                "client_email": self.GOOGLE_CLIENT_EMAIL,
+                "client_id": self.GOOGLE_CLIENT_ID,
+                "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+                "token_uri": "https://oauth2.googleapis.com/token",
+                "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+                "client_x509_cert_url": f"https://www.googleapis.com/robot/v1/metadata/x509/{self.GOOGLE_CLIENT_EMAIL}" if self.GOOGLE_CLIENT_EMAIL else "",
+                "universe_domain": "googleapis.com"
+            }
+        return None
 
 
 

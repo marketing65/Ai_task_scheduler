@@ -51,10 +51,17 @@ def upload_attachment_to_drive(attachment_url: str) -> str:
 
     try:
         # 2. Authenticate using Service Account credentials
-        creds = service_account.Credentials.from_service_account_file(
-            settings.GOOGLE_SHEETS_CREDS_FILE,
-            scopes=SCOPES
-        )
+        creds_dict = settings.get_google_credentials()
+        if creds_dict:
+            creds = service_account.Credentials.from_service_account_info(
+                creds_dict,
+                scopes=SCOPES
+            )
+        else:
+            creds = service_account.Credentials.from_service_account_file(
+                settings.GOOGLE_SHEETS_CREDS_FILE,
+                scopes=SCOPES
+            )
         authed_session = AuthorizedSession(creds)
 
         # 3. Detect MIME type
