@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "ai-driven-task-scheduler",
+  "private_key_id": "4a465b6fdc655b8dd2e9962e23c82a36ab14a60c",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDCsXsmQEgsZrdd\nWHZn6xMQJ4kVOTGCVu83ORqwcCdh5uV9EvBqmZan0J8zVEzQRB4ht+WGRROHteSU\nCw4K8GmOuqnF3xW0I/O3cuu4NhWosN2hkEYcqp9eEmVcsRsTDJODGK4selO5urKF\n+2HECMYL7l1EG7S/7160HR8blDDl/MINYDVKj0tHAtNwQsbAw+arwcimj78vYmIT\n3TjGcaXDp5Y3tz08rAOM2vve5Uf/W3Bnc/+K7DimrrhMkXnonsOngxRW8zYTUG1l\nL6xE5k4dQpWZYF/ydiEXfzA8GTVHHzpckJVE2krQ2QUUz5YW0XHZjyxn4ksuGAv3\nMlenty7FAgMBAAECggEAXhKo2RY1aXLmRc3RRKwi5WrdA2rDv+Fmq+3FNhyzAsyw\n9WrZzQBSedrFmeUxSm6nio5Tcrnc0nWysU/YJLP+pS8PimMdFxJKGEmImVVUyNJQ\n/Nh78C0HXUqRPKT82or4md8qhaZD31nVGgUZu8GrhCdUXGzwvM8aGPh7R/WmXPGX\n/doGhic+7IMRj4kRj6slew/l7j2vSiPha3eG24X/OtJnCP0a164Jct2XF8NwGol0\nbh1YngsQpjrC5BXQIgoWcZvW8R67yLsMQIyGG4FeVuv+cTlfLUTX8y1nmih6qKQJ\nJle13Tv4I81Mcbz8h+dIn/CyMaqJ1uChqZS/81xQ3wKBgQD5EPO9iaLoLrIgBjMX\nu5bR1T9I6Q2pWzlCMNTrgsAvI+90Jj7ZNDwwhh5Y2QbJxqi6BgFdrfQ3OfdAOcag\ns4TnAKpFhv6q4/Fw1RxIOa3mMXAA1lr5LhhXcCL8mGucO80/F3mzglzSCiOzoGkR\nBMMnXUp6xseta7gJjRKKoUZK2wKBgQDIHQX38r2L2owtFNsyJRdPLif6yylZJMmd\n4Ir8NQ7PaSIhg+4XO/qcFR1IzcjLxh+gttwW6GojMsPzPP2TTM9zVzPdS6vTnLZA\njwS9qV1cPbrDDv2GLWJ6leY76cBzqFnq/DHelkyEw1FC7U8iSTAZXRrggcigLmKL\nJE0d7WwO3wKBgAUlToPZ9h2p6VA0EJYq8ADB0R7mgbvAALzXWW7MMsBGk8noiF/g\nbmXqP3JCeZttmUrOmPSghW0mq28OQoZLbzF+mAX7tgM91l0oaf8sAeXBm7jItPR0\n+VfFH1Psqjx+F8135LHKvbQxNW+ens0VNhr4GHPU64cvtIut+HYYwuUFAoGAUZW7\nnDYD3yPP6IVLRGto0GhR9majyes8o7grEd4T1q3XM3DVPfW/G6lkEg2L4sA4ns5O\ndqx0sTr+NonUHBzBqxWPWJaETDbk+vcUCLsnC/dC0EmpRO3162J3xk9rnfuyBSKi\ntkvykGINHEsh6ymJiZ2y2nsvL1cZ5/55zkzAtGMCgYB/rPsQG1A/b2oCkJzDWoIg\nbDBs0bGOZO/HSO5W4E0YepC3mJ0nwioT15T0c6ipEeqTZE9hqtOFBq6zKgjmbEzl\nE58RDxYnskN8QlUyuZ5NTG1+I8JU6WaM2gK8CDuCIdZc4e+OHEDPtF2TGEwb8Saz\nwy+pfhVUCr9yoX+8fqnX3w==\n-----END PRIVATE KEY-----\n",
+  "client_email": "task-scheduler@ai-driven-task-scheduler.iam.gserviceaccount.com",
+  "client_id": "113186051044431629556",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/task-scheduler%40ai-driven-task-scheduler.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
