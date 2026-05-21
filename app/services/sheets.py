@@ -36,7 +36,18 @@ def export_tasks_to_google_sheet(tasks: list[TaskResponse], base_url: str = None
 
     try:
         # 1. Authenticate using Service Account credentials
-        gc = gspread.service_account(filename=settings.GOOGLE_SHEETS_CREDS_FILE)
+        if settings.GOOGLE_CREDS:
+            import json
+            try:
+                creds_info = json.loads(settings.GOOGLE_CREDS)
+                if "private_key" in creds_info:
+                    creds_info["private_key"] = creds_info["private_key"].replace("\\n", "\n")
+                gc = gspread.service_account_from_dict(creds_info)
+            except Exception as parse_err:
+                logger.error(f"Failed to parse GOOGLE_CREDS environment variable: {parse_err}")
+                raise RuntimeError(f"Invalid GOOGLE_CREDS JSON format: {parse_err}")
+        else:
+            gc = gspread.service_account(filename=settings.GOOGLE_SHEETS_CREDS_FILE)
 
         # 2. Open the spreadsheet by its ID/Key
         spreadsheet_id = settings.GOOGLE_SHEETS_SPREADSHEET_ID

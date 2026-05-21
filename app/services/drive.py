@@ -51,10 +51,24 @@ def upload_attachment_to_drive(attachment_url: str) -> str:
 
     try:
         # 2. Authenticate using Service Account credentials
-        creds = service_account.Credentials.from_service_account_file(
-            settings.GOOGLE_SHEETS_CREDS_FILE,
-            scopes=SCOPES
-        )
+        if settings.GOOGLE_CREDS:
+            import json
+            try:
+                creds_info = json.loads(settings.GOOGLE_CREDS)
+                if "private_key" in creds_info:
+                    creds_info["private_key"] = creds_info["private_key"].replace("\\n", "\n")
+                creds = service_account.Credentials.from_service_account_info(
+                    creds_info,
+                    scopes=SCOPES
+                )
+            except Exception as parse_err:
+                logger.error(f"Failed to parse GOOGLE_CREDS for Google Drive: {parse_err}")
+                raise RuntimeError(f"Invalid GOOGLE_CREDS JSON format for Drive: {parse_err}")
+        else:
+            creds = service_account.Credentials.from_service_account_file(
+                settings.GOOGLE_SHEETS_CREDS_FILE,
+                scopes=SCOPES
+            )
         authed_session = AuthorizedSession(creds)
 
         # 3. Detect MIME type

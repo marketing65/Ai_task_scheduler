@@ -31,7 +31,7 @@ class Settings(BaseSettings):
     )
 
     # ── Server ───────────────────────────────────────────────
-    HOST: str = Field(default="localhost", description="Server host")
+    HOST: str = Field(default="0.0.0.0", description="Server host")
 
     PORT: int = Field(default=8000, description="Server port")
 
