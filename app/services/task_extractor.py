@@ -5,7 +5,8 @@ Uses OpenAI GPT to extract structured tasks from multilingual text input.
 
 import json
 import time
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
+IST = timezone(timedelta(hours=5, minutes=30))
 from openai import OpenAI
 from app.config import settings
 from app.models import TaskResponse, ProcessingResult
@@ -50,7 +51,7 @@ async def extract_tasks(input_text: str, attachment_filename: str | None = None)
         RuntimeError: If GPT API call or JSON parsing fails.
     """
     start_time = time.time()
-    today_str = datetime.now().strftime("%Y-%m-%d")
+    today_str = datetime.now(IST).strftime("%Y-%m-%d")
 
     logger.info(f"Extracting tasks from input: '{input_text[:100]}...'")
 
@@ -164,7 +165,7 @@ async def extract_tasks(input_text: str, attachment_filename: str | None = None)
                 confusion = True
 
         task = TaskResponse(
-            created_at=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            created_at=datetime.now(IST).strftime("%Y-%m-%d %H:%M:%S"),
             requester_name=final_requester,
             doer_name=final_doer,
             doer_department=final_department,

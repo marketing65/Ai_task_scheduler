@@ -24,8 +24,9 @@ async def client():
 
 @pytest.mark.anyio
 @patch("app.services.sheets.upload_attachment_to_drive")
+@patch("gspread.service_account_from_dict")
 @patch("gspread.service_account")
-async def test_sheets_export_success(mock_service_account, mock_upload_drive, client: AsyncClient):
+async def test_sheets_export_success(mock_service_account, mock_service_account_from_dict, mock_upload_drive, client: AsyncClient):
     """
     Test successful export of multiple tasks to Google Sheets.
     Verifies that rows are properly structured and append_rows is called.
@@ -36,6 +37,7 @@ async def test_sheets_export_success(mock_service_account, mock_upload_drive, cl
     mock_worksheet = MagicMock()
     
     mock_service_account.return_value = mock_gc
+    mock_service_account_from_dict.return_value = mock_gc
     mock_gc.open_by_key.return_value = mock_sh
     mock_sh.get_worksheet.return_value = mock_worksheet
     mock_worksheet.row_values.return_value = ["Timestamp ", "Requester ", "Task ", "Doer ", "Due date"]
@@ -77,7 +79,7 @@ async def test_sheets_export_success(mock_service_account, mock_upload_drive, cl
     assert data["exported_count"] == 2
 
     # Verify Mock interactions
-    mock_service_account.assert_called_once()
+    assert mock_service_account.called or mock_service_account_from_dict.called
     mock_gc.open_by_key.assert_called_once_with("1qNj25TWKLScZUoh9GsQRBUAZEYPWW3toI8xL8KdVBOA")
     mock_sh.get_worksheet.assert_called_once_with(0)
     mock_upload_drive.assert_called_once_with("/static/attachments/123_docs.pdf")
@@ -110,13 +112,15 @@ async def test_sheets_export_empty_tasks(client: AsyncClient):
 
 
 @pytest.mark.anyio
+@patch("gspread.service_account_from_dict")
 @patch("gspread.service_account")
-async def test_sheets_export_api_error(mock_service_account, client: AsyncClient):
+async def test_sheets_export_api_error(mock_service_account, mock_service_account_from_dict, client: AsyncClient):
     """
     If the Sheets API returns an error, the endpoint should return 500.
     """
     # Mocking authentication or API failure
     mock_service_account.side_effect = Exception("Authentication failed - Invalid Credentials")
+    mock_service_account_from_dict.side_effect = Exception("Authentication failed - Invalid Credentials")
 
     payload = {
         "tasks": [

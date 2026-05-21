@@ -3,7 +3,8 @@ Google Sheets Service.
 Handles authentication using Google service account JSON and appends task rows.
 """
 
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
+IST = timezone(timedelta(hours=5, minutes=30))
 import gspread
 from app.config import settings
 from app.models import TaskResponse
@@ -67,7 +68,7 @@ def export_tasks_to_google_sheet(tasks: list[TaskResponse], base_url: str = None
         # Column E: Due date
         # Column F: Attachment
         rows_to_append = []
-        current_time_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        current_time_str = datetime.now(IST).strftime("%Y-%m-%d %H:%M:%S")
 
         for task in tasks:
             # Format timestamp: use created_at or default to now
