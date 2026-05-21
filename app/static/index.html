@@ -1,0 +1,2036 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Task Manager – Hindi / Hinglish / English</title>
+  <meta name="description"
+    content="AI-powered task management: convert voice or text in Hindi, Hinglish, or English into structured tasks instantly." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet" />  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #030712;
+      --surface: rgba(17, 24, 39, 0.55);
+      --surface-hover: rgba(31, 41, 55, 0.7);
+      --surface-solid: #0f172a;
+      --border: rgba(226, 116, 25, 0.15);
+      --border-hover: rgba(226, 116, 25, 0.35);
+      --accent: #E27419;
+      --accent-glow: rgba(226, 116, 25, 0.4);
+      --accent2: #3b82f6;
+      --accent2-glow: rgba(59, 130, 246, 0.3);
+      --accent3: #f59e0b;
+      --text: #f3f4f6;
+      --muted: #9ca3af;
+      --success: #10b981;
+      --error: #ef4444;
+      --radius: 20px;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* ── Animating Neon Background Mesh Glows ── */
+    .mesh-glow {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(140px);
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.4;
+      mix-blend-mode: screen;
+    }
+
+    .mesh-glow-1 {
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(226, 116, 25, 0.3) 0%, transparent 70%);
+      top: -10%;
+      right: 5%;
+      animation: floatGlow1 25s infinite alternate ease-in-out;
+    }
+
+    .mesh-glow-2 {
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.2) 0%, transparent 70%);
+      bottom: -10%;
+      left: -5%;
+      animation: floatGlow2 30s infinite alternate ease-in-out;
+    }
+
+    .mesh-glow-3 {
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, transparent 70%);
+      top: 40%;
+      left: 30%;
+      animation: floatGlow3 20s infinite alternate ease-in-out;
+    }
+
+    @keyframes floatGlow1 {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(-100px, 80px) scale(1.2); }
+    }
+    @keyframes floatGlow2 {
+      0% { transform: translate(0, 0) scale(1.1); }
+      100% { transform: translate(120px, -90px) scale(0.9); }
+    }
+    @keyframes floatGlow3 {
+      0% { transform: translate(0, 0) scale(0.9); }
+      100% { transform: translate(-60px, -60px) scale(1.15); }
+    }
+
+    /* ── High-End Dashboard Grid Layout ── */
+    .dashboard-container {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      min-height: 100vh;
+      position: relative;
+      z-index: 1;
+    }
+
+    @media (max-width: 1024px) {
+      .dashboard-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ── Sidebar Styling ── */
+    aside.sidebar {
+      background: rgba(17, 24, 39, 0.65);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      border-right: 1px solid var(--border);
+      padding: 40px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
+
+    @media (max-width: 1024px) {
+      aside.sidebar {
+        height: auto;
+        position: relative;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        padding: 30px 20px;
+      }
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-icon {
+      width: 46px;
+      height: 46px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      box-shadow: 0 0 20px var(--accent-glow);
+    }
+
+    .logo-text {
+      font-size: 1.4rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .logo-text span {
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+    }
+
+    .logo-tagline {
+      color: var(--muted);
+      font-size: 0.82rem;
+      margin-top: -24px;
+      line-height: 1.4;
+    }
+
+    /* Sidebar Status Card */
+    .sidebar-status-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 14px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.88rem;
+      font-weight: 600;
+    }
+
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      background-color: var(--success);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--success);
+      animation: pulse 1.8s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+      70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+
+    .status-detail {
+      font-size: 0.78rem;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-detail::before {
+      content: '✔';
+      color: var(--success);
+      font-weight: bold;
+    }
+
+    .lang-badges {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .badge {
+      padding: 10px 16px;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      background: rgba(226, 116, 25, 0.04);
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: var(--transition);
+    }
+
+    .badge:hover {
+      background: rgba(226, 116, 25, 0.08);
+      border-color: var(--border-hover);
+    }
+
+    .instruction-guide {
+      background: rgba(59, 130, 246, 0.05);
+      border: 1px solid rgba(59, 130, 246, 0.1);
+      border-radius: 14px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .instruction-guide h4 {
+      font-size: 0.85rem;
+      color: #93c5fd;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    .instruction-guide ul {
+      list-style-type: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 0.76rem;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .instruction-guide li {
+      position: relative;
+      padding-left: 14px;
+    }
+
+    .instruction-guide li::before {
+      content: '•';
+      position: absolute;
+      left: 0;
+      color: #93c5fd;
+      font-weight: bold;
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      font-size: 0.72rem;
+      color: rgba(255, 255, 255, 0.2);
+      text-align: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.03);
+      padding-top: 20px;
+    }
+
+    /* ── Main content layout ── */
+    main.main-content {
+      padding: 40px 48px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+      max-width: 1300px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 1024px) {
+      main.main-content {
+        padding: 30px 20px;
+      }
+    }
+
+    /* ── Top Overview Grid ── */
+    .overview-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .overview-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .overview-card {
+      background: rgba(17, 24, 39, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: var(--radius);
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      transition: var(--transition);
+    }
+
+    .overview-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(255, 255, 255, 0.1);
+      background: rgba(17, 24, 39, 0.55);
+    }
+
+    .overview-card-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.04);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .overview-card h3 {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .overview-card p {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    /* ── Tabs Styling (Premium Glass Bar) ── */
+    .tabs {
+      display: flex;
+      background: rgba(17, 24, 39, 0.55);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 6px;
+      gap: 4px;
+    }
+
+    @media (max-width: 640px) {
+      .tabs {
+        flex-direction: column;
+      }
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 14px;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 600;
+      border-radius: 14px;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .tab-btn.active {
+      background: linear-gradient(135deg, var(--accent), #c05e10);
+      color: #fff;
+      box-shadow: 0 4px 20px var(--accent-glow);
+    }
+
+    .tab-btn:hover:not(.active) {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    /* ── Glassmorphism Cards ── */
+    .card {
+      background: rgba(17, 24, 39, 0.45);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border-radius: var(--radius);
+      padding: 32px;
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+      transition: var(--transition);
+    }
+
+    .card:hover {
+      border-color: var(--border-hover);
+    }
+
+    /* ── Form Elements ── */
+    label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--muted);
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    textarea,
+    input[type="text"] {
+      width: 100%;
+      padding: 16px 18px;
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.95rem;
+      resize: vertical;
+      outline: none;
+      transition: var(--transition);
+    }
+
+    textarea:focus,
+    input[type="text"]:focus {
+      border-color: var(--accent);
+      background: rgba(15, 23, 42, 0.85);
+      box-shadow: 0 0 0 3px rgba(226, 116, 25, 0.15);
+    }
+
+    textarea {
+      min-height: 140px;
+      line-height: 1.6;
+    }
+
+    /* Examples */
+    .examples {
+      display: flex;
+      gap: 10px;
+      margin: 18px 0 24px;
+      flex-wrap: wrap;
+    }
+
+    .example-pill {
+      font-size: 0.8rem;
+      font-weight: 500;
+      padding: 8px 16px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 99px;
+      cursor: pointer;
+      color: var(--muted);
+      transition: var(--transition);
+    }
+
+    .example-pill:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.12);
+      transform: translateY(-1px);
+    }
+
+    /* Buttons */
+    .btn-primary {
+      width: 100%;
+      padding: 16px;
+      font-family: inherit;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #fff;
+      background: linear-gradient(135deg, var(--accent), #c05e10);
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 20px var(--accent-glow);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 24px rgba(226, 116, 25, 0.5);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    /* Drop Zone (Advanced File Upload) */
+    .drop-zone {
+      border: 2px dashed var(--border);
+      border-radius: 14px;
+      padding: 40px 20px;
+      text-align: center;
+      cursor: pointer;
+      background: rgba(255, 255, 255, 0.01);
+      transition: var(--transition);
+      position: relative;
+    }
+
+    .drop-zone:hover {
+      border-color: var(--accent);
+      background: rgba(226, 116, 25, 0.02);
+    }
+
+    .drop-zone input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .drop-icon {
+      font-size: 38px;
+      margin-bottom: 12px;
+      transition: var(--transition);
+    }
+
+    .drop-zone:hover .drop-icon {
+      transform: translateY(-4px) scale(1.1);
+    }
+
+    .drop-text {
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .drop-text strong {
+      color: var(--text);
+    }
+
+    .file-selected {
+      display: none;
+      margin-top: 14px;
+      padding: 10px 14px;
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      border-radius: 8px;
+      color: var(--success);
+      font-size: 0.88rem;
+      font-weight: 600;
+      animation: fadeIn 0.3s;
+    }
+
+    /* Mic Button (Pulse Ring animation) */
+    .btn-mic {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      background: rgba(226, 116, 25, 0.08);
+      font-size: 28px;
+      cursor: pointer;
+      transition: var(--transition);
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .btn-mic:hover {
+      border-color: var(--accent);
+      transform: scale(1.05);
+      background: rgba(226, 116, 25, 0.15);
+      box-shadow: 0 0 30px var(--accent-glow);
+    }
+
+    .btn-mic.recording {
+      background: rgba(239, 68, 68, 0.2);
+      border-color: var(--error);
+      color: #fff;
+      animation: micPulse 1.5s infinite;
+    }
+
+    @keyframes micPulse {
+      0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5); }
+      70% { box-shadow: 0 0 0 20px rgba(239, 68, 68, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    }
+
+    /* Error Box */
+    .error-box {
+      display: none;
+      margin-top: 16px;
+      padding: 14px 18px;
+      background: rgba(239, 68, 68, 0.08);
+      border: 1px solid rgba(239, 68, 68, 0.25);
+      border-radius: 10px;
+      color: #fca5a5;
+      font-size: 0.88rem;
+      font-weight: 500;
+      line-height: 1.5;
+      animation: fadeIn 0.3s;
+    }
+
+    /* ── Employee Management Grid ── */
+    .emp-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+    }
+
+    @media (max-width: 768px) {
+      .emp-grid {
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }
+    }
+
+    .emp-section-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding-bottom: 10px;
+    }
+
+    .emp-add-form {
+      margin-bottom: 20px;
+    }
+
+    .emp-add-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-emp-add {
+      padding: 0 20px;
+      background: var(--surface-solid);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--accent);
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition);
+      white-space: nowrap;
+    }
+
+    .btn-emp-add:hover {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 0 16px var(--accent-glow);
+    }
+
+    .emp-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 280px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .emp-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 10px;
+      transition: var(--transition);
+    }
+
+    .emp-item:hover {
+      background: rgba(255, 255, 255, 0.04);
+      border-color: rgba(255, 255, 255, 0.08);
+    }
+
+    .emp-name {
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .emp-meta {
+      font-size: 0.72rem;
+      color: var(--muted);
+      background: rgba(255, 255, 255, 0.03);
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-left: 6px;
+    }
+
+    .btn-emp-delete {
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 0.95rem;
+      padding: 4px;
+      transition: var(--transition);
+    }
+
+    .btn-emp-delete:hover {
+      color: var(--error);
+      transform: scale(1.1);
+    }
+
+    /* ── Dynamic Loader Styling ── */
+    .loader {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      padding: 40px;
+      background: rgba(17, 24, 39, 0.6);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 20px;
+      animation: fadeIn 0.3s;
+    }
+
+    .spinner {
+      width: 48px;
+      height: 48px;
+      border: 4px solid rgba(226, 116, 25, 0.1);
+      border-left-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loader p {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    /* ── RESULTS & ADVANCED TASK GRID ── */
+    #results {
+      display: none;
+      animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .result-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding-bottom: 12px;
+    }
+
+    .result-header h2 {
+      font-size: 1.3rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .result-meta {
+      display: flex;
+      gap: 10px;
+    }
+
+    .meta-chip {
+      padding: 6px 12px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .input-preview {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      font-size: 0.92rem;
+      line-height: 1.6;
+    }
+
+    .input-preview strong {
+      display: block;
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 6px;
+    }
+
+    /* Advanced Task Grid Container */
+    #tasks-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 20px;
+      align-items: start;
+    }
+
+    @media (max-width: 640px) {
+      #tasks-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Elegant Task Card Design */
+    .task-card {
+      background: rgba(17, 24, 39, 0.55);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      animation: cardAppear 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+      transition: var(--transition);
+    }
+
+    .task-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--border-hover);
+      box-shadow: 0 6px 24px rgba(226, 116, 25, 0.1);
+    }
+
+    .task-num {
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .task-desc {
+      font-size: 0.95rem;
+      font-weight: 600;
+      line-height: 1.5;
+      color: var(--text);
+    }
+
+    /* Field layouts inside card */
+    .field {
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      border-radius: 12px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .field-value {
+      font-size: 0.88rem;
+      font-weight: 600;
+    }
+
+    .field-value.null {
+      color: var(--muted);
+      font-style: italic;
+      font-weight: 400;
+    }
+
+    /* Badge indicators */
+    .badge-confirmed {
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-radius: 99px;
+      color: var(--success);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .badge-warn {
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      background: rgba(245, 158, 11, 0.1);
+      border: 1px solid rgba(245, 158, 11, 0.25);
+      border-radius: 99px;
+      color: var(--accent3);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .btn-resolve {
+      width: 100%;
+      padding: 12px;
+      background: rgba(226, 116, 25, 0.06);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--accent);
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .btn-resolve:hover {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 4px 12px var(--accent-glow);
+    }
+
+    /* ── Confirmation Modal ── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(3, 7, 18, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      animation: fadeIn 0.25s;
+    }
+
+    .modal-box {
+      background: var(--surface-solid);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      width: 100%;
+      max-width: 460px;
+      padding: 28px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      animation: scaleUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding-bottom: 10px;
+    }
+
+    .modal-header h3 {
+      font-size: 1.1rem;
+      font-weight: 800;
+    }
+
+    .modal-close {
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+
+    .modal-body {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .modal-form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .modal-form-group select {
+      width: 100%;
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.9rem;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+
+    .btn-modal-cancel {
+      padding: 12px 20px;
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      color: var(--muted);
+      font-weight: 600;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .btn-modal-cancel:hover {
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text);
+    }
+
+    .btn-modal-save {
+      padding: 12px 20px;
+      background: linear-gradient(135deg, var(--accent), #c05e10);
+      border: none;
+      color: #fff;
+      font-weight: 700;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: 0 4px 12px var(--accent-glow);
+    }
+
+    .btn-modal-save:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(226, 116, 25, 0.45);
+    }
+
+    /* ── Status bar ── */
+    .status-bar {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(17, 24, 39, 0.65);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      padding: 10px 20px;
+      border-radius: 99px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+      z-index: 999;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--success);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--success);
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    @keyframes scaleUp {
+      from { transform: scale(0.95); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    @keyframes cardAppear {
+      from { transform: scale(0.92) translateY(15px); opacity: 0; }
+      to { transform: scale(1) translateY(0); opacity: 1; }
+    }
+
+    /* Card Select and Warning */
+    .card-select-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .card-select-doer {
+      width: 100%;
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 12px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.88rem;
+      outline: none;
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      background-size: 14px;
+      padding-right: 32px;
+      transition: var(--transition);
+    }
+
+    .card-select-doer:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(226, 116, 25, 0.15);
+    }
+
+    .card-field-warning {
+      font-size: 0.72rem;
+      color: rgb(245, 158, 11);
+      line-height: 1.4;
+      margin-top: 2px;
+      font-weight: 600;
+    }
+  </style>
+
+
+</head><body>
+
+  <!-- Animating background mesh blows -->
+  <div class="mesh-glow mesh-glow-1"></div>
+  <div class="mesh-glow mesh-glow-2"></div>
+  <div class="mesh-glow mesh-glow-3"></div>
+
+  <div class="dashboard-container">
+
+    <!-- Sidebar Layout (Left column) -->
+    <aside class="sidebar">
+      <div class="logo">
+        <div class="logo-icon">🤖</div>
+        <div class="logo-text">AI <span>Task Manager</span></div>
+      </div>
+      <p class="logo-tagline">Multilingual Task Extraction Suite</p>
+
+      <div class="sidebar-status-card">
+        <div class="status-indicator">
+          <div class="status-dot"></div>
+          <span>Systems Online</span>
+        </div>
+        <div class="status-detail">Google Sheets: Active</div>
+        <div class="status-detail">Google Drive: Active</div>
+      </div>
+
+      <div class="lang-badges">
+        <div class="badge">🇮🇳 Hindi Voice/Text</div>
+        <div class="badge">🔀 Hinglish Voice/Text</div>
+        <div class="badge">🇺🇸 English Voice/Text</div>
+      </div>
+
+      <div class="instruction-guide">
+        <h4>💡 Quick Guide</h4>
+        <ul>
+          <li>Type instructions in English, Hindi, or Hinglish.</li>
+          <li>Or upload voice notes / record direct audio.</li>
+          <li>AI will extract structured task fields, assign personnel, and upload attachments to Google Drive.</li>
+          <li>Click <strong>Assign Tasks to Google Sheet</strong> to sync.</li>
+        </ul>
+      </div>
+
+      <div class="sidebar-footer">
+        © 2026 AI Task Suite v2.0
+      </div>
+    </aside>
+
+    <!-- Main Content Workspace (Right column) -->
+    <main class="main-content">
+
+      <!-- Top Overview Grid -->
+      <div class="overview-grid">
+        <div class="overview-card">
+          <div class="overview-card-icon">⚡</div>
+          <div>
+            <h3>Real-time Extraction</h3>
+            <p>Whisper & GPT Engines</p>
+          </div>
+        </div>
+        <div class="overview-card">
+          <div class="overview-card-icon">📊</div>
+          <div>
+            <h3>Google Sheets Sync</h3>
+            <p>Direct export columns A-F</p>
+          </div>
+        </div>
+        <div class="overview-card">
+          <div class="overview-card-icon">☁️</div>
+          <div>
+            <h3>Google Drive Cloud</h3>
+            <p>Public view attachments</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabs Bar -->
+      <div class="tabs">
+        <button class="tab-btn active" id="tab-text" onclick="switchTab('text')">
+          ✏️ Text Input
+        </button>
+        <button class="tab-btn" id="tab-audio" onclick="switchTab('audio')">
+          🎵 Audio File
+        </button>
+        <button class="tab-btn" id="tab-mic" onclick="switchTab('mic')">
+          🎙️ Record Voice
+        </button>
+        <button class="tab-btn" id="tab-employees" onclick="switchTab('employees')">
+          👥 Manage Employees
+        </button>
+      </div>
+
+      <!-- TEXT TAB panel -->
+      <div id="panel-text">
+        <div class="card">
+          <label for="text-input">Your Instruction</label>
+          <textarea id="text-input"
+            placeholder="Type in Hindi, Hinglish, or English…&#10;&#10;Example: Mukesh sir ne bola Rahul ko HR department mein documents submit karne hain aur last date 25 अप्रैल है।"></textarea>
+
+          <div class="attachment-trigger-wrapper" style="margin-top: 18px; display: flex; flex-direction: column; gap: 8px; width: 100%;">
+            <label for="text-attachment-link" style="font-size: 0.85rem; font-weight: 600; color: var(--muted); display: flex; align-items: center; gap: 6px;">
+              🔗 Attachment Link (Optional URL)
+            </label>
+            <input type="url" id="text-attachment-link" placeholder="Paste Google Drive, Dropbox, or any web URL here…"
+              style="width: 100%; background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; color: var(--text); font-family: inherit; font-size: 0.9rem; outline: none; transition: var(--transition);" />
+          </div>
+
+
+          <div class="examples">
+            <span class="example-pill" onclick="fillExample(0)">Hindi Example</span>
+            <span class="example-pill" onclick="fillExample(1)">Hinglish Example</span>
+            <span class="example-pill" onclick="fillExample(2)">English Example</span>
+          </div>
+
+          <button class="btn-primary" id="btn-text-submit" onclick="submitText()">
+            ⚡ Extract Tasks
+          </button>
+          <div class="error-box" id="text-error"></div>
+        </div>
+      </div>
+
+      <!-- AUDIO TAB panel -->
+      <div id="panel-audio" style="display:none;">
+        <div class="card">
+          <label>Upload Audio File</label>
+          <div class="drop-zone" id="drop-zone">
+            <input type="file" id="audio-file" accept=".mp3,.wav,.m4a,.webm,.ogg,.flac" onchange="onFileSelect(event)" />
+            <div class="drop-icon">🎵</div>
+            <div class="drop-text"><strong>Click to browse</strong> or drag & drop</div>
+            <div class="drop-text" style="margin-top:6px;font-size:0.78rem;">MP3 · WAV · M4A · WEBM · OGG · FLAC (max 25MB)</div>
+          </div>
+          <div class="file-selected" id="file-selected">✅ <span id="file-name"></span></div>
+          <button class="btn-primary" id="btn-audio-submit" onclick="submitAudio()" disabled style="margin-top: 20px;">
+            🎯 Transcribe & Extract Tasks
+          </button>
+          <div class="error-box" id="audio-error"></div>
+        </div>
+      </div>
+
+      <!-- MIC TAB panel -->
+      <div id="panel-mic" style="display:none;">
+        <div class="card" style="text-align:center;">
+          <p style="color:var(--muted);margin-bottom:24px;font-size:0.9rem;">Record your voice directly from the browser</p>
+          <button class="btn-mic" id="btn-mic" onclick="toggleRecording()">
+            🎙️
+          </button>
+          <div id="mic-status" style="margin-top:20px;color:var(--text);font-weight: 600;font-size:0.88rem;min-height:24px;">Click to Start Recording</div>
+          <audio id="audio-preview" controls style="display:none;margin-top:16px;width:100%;border-radius:8px;"></audio>
+          <button class="btn-primary" id="btn-mic-submit" onclick="submitMic()" style="display:none;margin-top:20px;">
+            ⚡ Extract Tasks from Recording
+          </button>
+          <div class="error-box" id="mic-error"></div>
+        </div>
+      </div>
+
+      <!-- EMPLOYEES TAB panel -->
+      <div id="panel-employees" style="display:none;">
+        <div class="card">
+          <div class="emp-grid">
+            <!-- Requesters Column -->
+            <div>
+              <div class="emp-section-title">👔 Requesters <span style="color:var(--muted);font-size:0.72rem;font-weight:400;margin-left:4px;">(Task Assigners)</span></div>
+              <div class="emp-add-form">
+                <div class="emp-add-row">
+                  <input type="text" id="req-add-name" placeholder="Requester name…" />
+                  <button class="btn-emp-add" onclick="addRequester()">+ Add</button>
+                </div>
+              </div>
+              <div class="emp-list" id="req-list"></div>
+            </div>
+
+            <!-- Doers Column -->
+            <div>
+              <div class="emp-section-title">👷 Doers <span style="color:var(--muted);font-size:0.72rem;font-weight:400;margin-left:4px;">(Task Performers)</span></div>
+              <div class="emp-add-form">
+                <div class="emp-add-row">
+                  <input type="text" id="doer-add-name" placeholder="Employee name…" />
+                  <button class="btn-emp-add" onclick="addDoer()">+ Add</button>
+                </div>
+              </div>
+              <div class="emp-list" id="doer-list"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loader (Premium blur design) -->
+      <div class="loader" id="loader">
+        <div class="spinner"></div>
+        <p>AI is processing your request…</p>
+      </div>
+
+      <!-- Results section -->
+      <div id="results">
+        <div class="result-header">
+          <h2>📋 Extracted Tasks</h2>
+          <div class="result-meta">
+            <div class="meta-chip" id="meta-count">🗂️ 0 tasks</div>
+            <div class="meta-chip" id="meta-time">⏱️ 0ms</div>
+          </div>
+        </div>
+        <div class="input-preview">
+          <strong>📝 Processed Input</strong>
+          <span id="input-preview-text"></span>
+        </div>
+        <div id="tasks-container"></div>
+        
+        <!-- Google Sheets Sync Section -->
+        <div id="export-section" style="margin-top: 32px; text-align: center;">
+          <button class="btn-primary" id="btn-export-sheets" onclick="exportTasksToSheets()" style="background: linear-gradient(135deg, #10b981, #047857); box-shadow: 0 4px 20px rgba(16, 185, 129, 0.35); border: none; max-width: 320px; margin: 0 auto;">
+            🟢 Assign Tasks to Google Sheet
+          </button>
+          <div id="export-success" style="display: none; margin-top: 14px; padding: 14px; background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 10px; color: var(--success); font-size: 0.92rem; font-weight: 700;">
+            🎉 Successfully assigned all tasks to the Google Sheet!
+          </div>
+          <div class="error-box" id="export-error" style="margin-top: 14px; text-align: left;"></div>
+        </div>
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- Confirmation Modal -->
+  <div class="modal-overlay" id="confirm-modal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>🙋 Confirm Employee Match</h3>
+        <button class="modal-close" onclick="closeConfirmModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-form-group">
+          <label for="modal-select-req">👔 Requester (Assigner)</label>
+          <select id="modal-select-req"></select>
+        </div>
+        <div class="modal-form-group">
+          <label for="modal-select-doer">👷 Doer (Performer)</label>
+          <select id="modal-select-doer"></select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-modal-cancel" onclick="closeConfirmModal()">Cancel</button>
+        <button class="btn-modal-save" onclick="saveConfirmedNames()">✅ Save & Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Status bar -->
+  <div class="status-bar">
+    <div class="status-dot"></div>
+    <span>API Connected</span>
+  </div>
+
+
+  <script>
+    const EXAMPLES = [
+      "मुकेश सर ने कहा कि राहुल को HR department में documents submit करने हैं और last date 25 अप्रैल है।",
+      "Mukesh sir ne bola Rahul ko HR department mein documents submit karne hain aur last date 25 April hai",
+      "Mukesh has asked Rahul from the HR department to submit all required documents by April 25th."
+    ];
+
+    let mediaRecorder = null;
+    let recordedChunks = [];
+    let recordedBlob = null;
+    let activeTab = 'text';
+
+    function switchTab(tab) {
+      ['text', 'audio', 'mic', 'employees'].forEach(t => {
+        document.getElementById(`panel-${t}`).style.display = t === tab ? '' : 'none';
+        document.getElementById(`tab-${t}`).classList.toggle('active', t === tab);
+      });
+      activeTab = tab;
+      document.getElementById('results').style.display = 'none';
+      document.getElementById('loader').style.display = 'none';
+      if (tab === 'employees') loadEmployees();
+    }
+
+    // ─── Employee Manager ────────────────────────────────────────────
+
+    async function loadEmployees() {
+      const [rRes, dRes] = await Promise.all([
+        fetch('/employees/requesters').then(r => r.json()),
+        fetch('/employees/doers').then(r => r.json()),
+      ]);
+      requestersCached = rRes.requesters || [];
+      doersCached = dRes.doers || [];
+      renderRequesters(rRes.requesters || []);
+      renderDoers(dRes.doers || []);
+    }
+
+    function renderRequesters(list) {
+      const el = document.getElementById('req-list');
+      if (!list.length) { el.innerHTML = '<div class="emp-empty">No requesters added yet.</div>'; return; }
+      el.innerHTML = list.map(r => `
+        <div class="emp-item" id="req-item-${CSS.escape(r.name)}">
+          <div class="emp-item-info">
+            <div class="emp-item-name">${r.name}</div>
+          </div>
+          <button class="btn-emp-icon" title="Edit" onclick="editRequester('${r.name}')">✏️</button>
+          <button class="btn-emp-icon del" title="Delete" onclick="deleteRequester('${r.name}')">🗑️</button>
+        </div>`).join('');
+    }
+
+    function renderDoers(list) {
+      const el = document.getElementById('doer-list');
+      if (!list.length) { el.innerHTML = '<div class="emp-empty">No doers added yet.</div>'; return; }
+      el.innerHTML = list.map(d => `
+        <div class="emp-item" id="doer-item-${CSS.escape(d.name)}">
+          <div class="emp-item-info">
+            <div class="emp-item-name">${d.name}</div>
+          </div>
+          <button class="btn-emp-icon" title="Edit" onclick="editDoer('${d.name}')">✏️</button>
+          <button class="btn-emp-icon del" title="Delete" onclick="deleteDoer('${d.name}')">🗑️</button>
+        </div>`).join('');
+    }
+
+    // ─── Requester CRUD ──────────────────────────────────────────────
+
+    async function addRequester() {
+      const name = document.getElementById('req-add-name').value.trim();
+      if (!name) return;
+      const res = await fetch('/employees/requesters', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name }),
+      });
+      if (res.ok) { document.getElementById('req-add-name').value = ''; loadEmployees(); }
+      else { const e = await res.json(); alert('Error: ' + e.detail); }
+    }
+
+    function editRequester(oldName) {
+      const item = document.getElementById(`req-item-${CSS.escape(oldName)}`);
+      item.innerHTML = `
+        <div class="emp-edit-row">
+          <input type="text" id="req-edit-name-${CSS.escape(oldName)}" value="${oldName}" />
+          <div class="emp-edit-actions">
+            <button class="btn-save" onclick="saveRequester('${oldName}')">Save</button>
+            <button class="btn-cancel" onclick="loadEmployees()">Cancel</button>
+          </div>
+        </div>`;
+    }
+
+    async function saveRequester(oldName) {
+      const newName = document.getElementById(`req-edit-name-${CSS.escape(oldName)}`).value.trim();
+      if (!newName) return;
+      const res = await fetch(`/employees/requesters/${encodeURIComponent(oldName)}`, {
+        method: 'PUT', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ new_name: newName }),
+      });
+      if (res.ok) loadEmployees();
+      else { const e = await res.json(); alert('Error: ' + e.detail); }
+    }
+
+    async function deleteRequester(name) {
+      if (!confirm(`Delete requester "${name}"?`)) return;
+      await fetch(`/employees/requesters/${encodeURIComponent(name)}`, { method: 'DELETE' });
+      loadEmployees();
+    }
+
+    // ─── Doer CRUD ───────────────────────────────────────────────────
+
+    async function addDoer() {
+      const name = document.getElementById('doer-add-name').value.trim();
+      if (!name) return;
+      const res = await fetch('/employees/doers', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name }),
+      });
+      if (res.ok) {
+        document.getElementById('doer-add-name').value = '';
+        loadEmployees();
+      } else { const e = await res.json(); alert('Error: ' + e.detail); }
+    }
+
+    function editDoer(oldName) {
+      const item = document.getElementById(`doer-item-${CSS.escape(oldName)}`);
+      item.innerHTML = `
+        <div class="emp-edit-row">
+          <input type="text" id="doer-edit-name-${CSS.escape(oldName)}" value="${oldName}" placeholder="Name" />
+          <div class="emp-edit-actions">
+            <button class="btn-save" onclick="saveDoer('${oldName}')">Save</button>
+            <button class="btn-cancel" onclick="loadEmployees()">Cancel</button>
+          </div>
+        </div>`;
+    }
+
+    async function saveDoer(oldName) {
+      const newName = document.getElementById(`doer-edit-name-${CSS.escape(oldName)}`).value.trim();
+      if (!newName) return;
+      const res = await fetch(`/employees/doers/${encodeURIComponent(oldName)}`, {
+        method: 'PUT', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ new_name: newName }),
+      });
+      if (res.ok) loadEmployees();
+      else { const e = await res.json(); alert('Error: ' + e.detail); }
+    }
+
+    async function deleteDoer(name) {
+      if (!confirm(`Delete doer "${name}"?`)) return;
+      await fetch(`/employees/doers/${encodeURIComponent(name)}`, { method: 'DELETE' });
+      loadEmployees();
+    }
+
+    function fillExample(i) {
+      document.getElementById('text-input').value = EXAMPLES[i];
+    }
+
+    function showError(id, msg) {
+      const el = document.getElementById(id);
+      el.textContent = '⚠️ ' + msg;
+      el.style.display = 'block';
+    }
+    function hideError(id) {
+      document.getElementById(id).style.display = 'none';
+    }
+
+    function showLoader() {
+      document.getElementById('loader').style.display = 'block';
+      document.getElementById('results').style.display = 'none';
+    }
+    function hideLoader() {
+      document.getElementById('loader').style.display = 'none';
+    }
+
+    let currentTasks = [];
+    let currentConfirmIndex = -1;
+    let requestersCached = [];
+    let doersCached = [];
+
+    function renderResults(data) {
+      hideLoader();
+
+      // Store tasks globally for editing/confirming
+      if (data && data.tasks) {
+        currentTasks = data.tasks;
+      }
+
+      refreshTaskCards(data ? data.processing_time_ms : 0, data ? data.input_text : '');
+    }
+
+    function refreshTaskCards(timeMs = 0, inputText = '') {
+      const container = document.getElementById('tasks-container');
+      container.innerHTML = '';
+
+      document.getElementById('meta-count').textContent = `🗂️ ${currentTasks.length} task${currentTasks.length !== 1 ? 's' : ''}`;
+      if (timeMs) {
+        document.getElementById('meta-time').textContent = `⏱️ ${Math.round(timeMs)}ms`;
+      }
+      if (inputText) {
+        document.getElementById('input-preview-text').textContent = inputText;
+      }
+
+      currentTasks.forEach((task, i) => {
+        const fields = [
+          { label: '⏰ Assigned At', value: task.created_at || new Date().toLocaleString() },
+          { label: '👤 Requester', value: task.requester_name, isRequester: true },
+          { label: '🙋 Assigned To', value: task.doer_name, isDoer: true },
+          { label: '📅 Due Date', value: task.due_date },
+          { label: '📎 Attachment', value: task.attachment },
+        ];
+
+        const fieldsHtml = fields.map(f => {
+          let valHtml = f.value || 'Not specified';
+          if (f.label === '📎 Attachment' && f.value) {
+            if (f.value.startsWith('http') || f.value.startsWith('/static/')) {
+              const fileName = f.value.substring(f.value.lastIndexOf('/') + 1);
+              const parts = fileName.split('_');
+              const displayLabel = parts.length > 1 && !isNaN(parts[0]) ? parts.slice(1).join('_') : fileName;
+              valHtml = `<a href="${f.value}" target="_blank" style="color: var(--accent2); text-decoration: underline; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">🔗 ${displayLabel}</a>`;
+            }
+          } else if (f.isDoer) {
+            const isDoerInDirectory = f.value && doersCached.some(d => d.name.toLowerCase() === f.value.toLowerCase());
+            if (!isDoerInDirectory) {
+              let optionsHtml = `<option value="">Select the doer</option>`;
+              doersCached.forEach(d => {
+                const selected = (f.value && d.name.toLowerCase() === f.value.toLowerCase()) ? 'selected' : '';
+                optionsHtml += `<option value="${d.name}" ${selected}>${d.name}</option>`;
+              });
+              valHtml = `
+                <div class="card-select-wrapper">
+                  <select class="card-select-doer" onchange="updateCardDoer(${i}, this.value)">
+                    ${optionsHtml}
+                  </select>
+                  ${f.value ? `<div class="card-field-warning">⚠️ <strong>${f.value}</strong> is not in the doers list.</div>` : ''}
+                </div>
+              `;
+            }
+          } else if (f.isRequester) {
+            const isReqInDirectory = f.value && requestersCached.some(r => r.name.toLowerCase() === f.value.toLowerCase());
+            if (!isReqInDirectory) {
+              let optionsHtml = `<option value="">Select the requester</option>`;
+              requestersCached.forEach(r => {
+                const selected = (f.value && r.name.toLowerCase() === f.value.toLowerCase()) ? 'selected' : '';
+                optionsHtml += `<option value="${r.name}" ${selected}>${r.name}</option>`;
+              });
+              valHtml = `
+                <div class="card-select-wrapper">
+                  <select class="card-select-doer" onchange="updateCardRequester(${i}, this.value)">
+                    ${optionsHtml}
+                  </select>
+                  ${f.value ? `<div class="card-field-warning">⚠️ <strong>${f.value}</strong> is not in the requesters list.</div>` : ''}
+                </div>
+              `;
+            }
+          }
+          return `
+          <div class="field">
+            <div class="field-label">${f.label}</div>
+            <div class="field-value ${f.value ? '' : 'null'}">${valHtml}</div>
+          </div>`;
+        }).join('');
+
+        let badgeHtml = '';
+        let resolveBtnHtml = '';
+
+        // Check if both names are now valid (in directory)
+        const isReqValid = !task.requester_name || requestersCached.some(r => r.name.toLowerCase() === task.requester_name.toLowerCase());
+        const isDoerValid = !task.doer_name || doersCached.some(d => d.name.toLowerCase() === task.doer_name.toLowerCase());
+        const bothValid = isReqValid && isDoerValid;
+
+        if (task.confirmed_by_user) {
+          badgeHtml = `<span class="badge-confirmed">✅ Confirmed Match</span>`;
+        } else if (task.requires_confirmation && bothValid) {
+          // Names selected from dropdown but not yet confirmed
+          badgeHtml = `<span class="badge-warn">⚠️ Pending Confirmation</span>`;
+          resolveBtnHtml = `
+            <button class="btn-resolve" style="background: rgba(16,185,129,0.1); border-color: rgb(16,185,129); color: rgb(16,185,129);" onclick="confirmTask(${i})">
+              ✅ Confirm Selection
+            </button>`;
+        } else if (task.requires_confirmation) {
+          badgeHtml = `<span class="badge-warn">⚠️ Needs Confirmation</span>`;
+          resolveBtnHtml = `
+            <button class="btn-resolve" onclick="openConfirmModal(${i})">
+              📝 Confirm Requester & Doer from Dropdowns
+            </button>`;
+        }
+
+        container.innerHTML += `
+        <div class="task-card" style="animation-delay:${i * 0.1}s">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <div class="task-num">Task ${i + 1} of ${currentTasks.length}</div>
+            ${badgeHtml}
+          </div>
+          <div class="task-desc">${task.task_description}</div>
+          <div class="task-fields">${fieldsHtml}</div>
+          ${resolveBtnHtml}
+        </div>`;
+      });
+
+      // Enable or disable Google Sheets sync based on whether any task requires confirmation
+      const anyRequiresConfirmation = currentTasks.some(t => t.requires_confirmation);
+      const exportBtn = document.getElementById('btn-export-sheets');
+      
+      if (anyRequiresConfirmation) {
+        exportBtn.disabled = true;
+        exportBtn.style.opacity = '0.6';
+        exportBtn.style.cursor = 'not-allowed';
+        exportBtn.innerHTML = `⚠️ Confirm Personnel to Sync Sheet`;
+        exportBtn.style.background = 'rgba(255, 255, 255, 0.05)';
+        exportBtn.style.border = '1px solid var(--border)';
+        exportBtn.style.boxShadow = 'none';
+      } else {
+        exportBtn.disabled = false;
+        exportBtn.style.opacity = '1';
+        exportBtn.style.cursor = 'pointer';
+        exportBtn.innerHTML = `🟢 Assign Tasks to Google Sheet`;
+        exportBtn.style.background = 'linear-gradient(135deg, #10b981, #047857)';
+        exportBtn.style.border = 'none';
+        exportBtn.style.boxShadow = '0 4px 20px rgba(16, 185, 129, 0.35)';
+      }
+
+      document.getElementById('results').style.display = 'block';
+      document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+
+    function updateCardDoer(taskIndex, selectedDoer) {
+      if (!selectedDoer) return;
+
+      const task = currentTasks[taskIndex];
+      task.doer_name = selectedDoer;
+
+      // Don't auto-confirm - let user click the confirm button
+      refreshTaskCards();
+    }
+
+    function updateCardRequester(taskIndex, selectedRequester) {
+      if (!selectedRequester) return;
+
+      const task = currentTasks[taskIndex];
+      task.requester_name = selectedRequester;
+
+      // Don't auto-confirm - let user click the confirm button
+      refreshTaskCards();
+    }
+
+    function confirmTask(taskIndex) {
+      const task = currentTasks[taskIndex];
+      task.requires_confirmation = false;
+      task.confirmed_by_user = true;
+      refreshTaskCards();
+    }
+
+    async function openConfirmModal(index) {
+      currentConfirmIndex = index;
+      const task = currentTasks[index];
+
+      const modal = document.getElementById('confirm-modal');
+      const reqSelect = document.getElementById('modal-select-req');
+      const doerSelect = document.getElementById('modal-select-doer');
+
+      // Load/Fetch directory lists if not loaded
+      if (requestersCached.length === 0 || doersCached.length === 0) {
+        const [rRes, dRes] = await Promise.all([
+          fetch('/employees/requesters').then(r => r.json()),
+          fetch('/employees/doers').then(r => r.json()),
+        ]);
+        requestersCached = rRes.requesters || [];
+        doersCached = dRes.doers || [];
+      }
+
+      // Populate Requester Dropdown
+      let reqOptionsHtml = `<option value="">-- Select Requester --</option>`;
+      let reqMatched = false;
+
+      requestersCached.forEach(r => {
+        const isSelected = r.name.toLowerCase() === (task.requester_name || '').toLowerCase();
+        if (isSelected) reqMatched = true;
+        reqOptionsHtml += `<option value="${r.name}" ${isSelected ? 'selected' : ''}>${r.name}</option>`;
+      });
+
+      // If task requester isn't in cached directory, add a temporary option
+      if (task.requester_name && !reqMatched) {
+        reqOptionsHtml += `<option value="${task.requester_name}" selected style="color:var(--error); font-style:italic;">
+          Extracted: ${task.requester_name} (Not in directory)
+        </option>`;
+      }
+      reqSelect.innerHTML = reqOptionsHtml;
+
+      // Populate Doer Dropdown
+      let doerOptionsHtml = `<option value="">-- Select Doer --</option>`;
+      let doerMatched = false;
+
+      doersCached.forEach(d => {
+        const isSelected = d.name.toLowerCase() === (task.doer_name || '').toLowerCase();
+        if (isSelected) doerMatched = true;
+        doerOptionsHtml += `<option value="${d.name}" ${isSelected ? 'selected' : ''}>${d.name}</option>`;
+      });
+
+      if (task.doer_name && !doerMatched) {
+        doerOptionsHtml += `<option value="${task.doer_name}" selected style="color:var(--error); font-style:italic;">
+          Extracted: ${task.doer_name} (Not in directory)
+        </option>`;
+      }
+      doerSelect.innerHTML = doerOptionsHtml;
+
+      // Open modal
+      modal.classList.add('active');
+    }
+
+    function closeConfirmModal() {
+      document.getElementById('confirm-modal').classList.remove('active');
+      currentConfirmIndex = -1;
+    }
+
+    function saveConfirmedNames() {
+      if (currentConfirmIndex === -1) return;
+
+      const reqSelect = document.getElementById('modal-select-req');
+      const doerSelect = document.getElementById('modal-select-doer');
+
+      const selectedReq = reqSelect.value;
+      const selectedDoer = doerSelect.value;
+
+      // Update task values
+      currentTasks[currentConfirmIndex].requester_name = selectedReq || null;
+      currentTasks[currentConfirmIndex].doer_name = selectedDoer || null;
+      currentTasks[currentConfirmIndex].requires_confirmation = false;
+      currentTasks[currentConfirmIndex].confirmed_by_user = true;
+
+      closeConfirmModal();
+      refreshTaskCards();
+    }
+
+    async function submitText() {
+      const text = document.getElementById('text-input').value.trim();
+      hideError('text-error');
+      if (!text) { showError('text-error', 'Please enter some text first.'); return; }
+      document.getElementById('btn-text-submit').disabled = true;
+      showLoader();
+      try {
+        const attachmentUrl = document.getElementById('text-attachment-link').value.trim() || null;
+
+        const res = await fetch('/process-text', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text, attachment: attachmentUrl })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || 'Server error');
+        renderResults(data);
+      } catch (e) {
+        hideLoader();
+        showError('text-error', e.message);
+      } finally {
+        document.getElementById('btn-text-submit').disabled = false;
+      }
+    }
+
+
+    function onFileSelect(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      document.getElementById('file-name').textContent = `${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
+      document.getElementById('file-selected').style.display = 'block';
+      document.getElementById('btn-audio-submit').disabled = false;
+    }
+
+    async function submitAudio() {
+      const file = document.getElementById('audio-file').files[0];
+      hideError('audio-error');
+      if (!file) { showError('audio-error', 'Please select an audio file.'); return; }
+      document.getElementById('btn-audio-submit').disabled = true;
+      showLoader();
+      try {
+        const form = new FormData();
+        form.append('audio', file);
+        const res = await fetch('/process-audio', { method: 'POST', body: form });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || 'Server error');
+        renderResults(data);
+      } catch (e) {
+        hideLoader();
+        showError('audio-error', e.message);
+      } finally {
+        document.getElementById('btn-audio-submit').disabled = false;
+      }
+    }
+
+    /* ── Mic recording ── */
+    async function toggleRecording() {
+      if (mediaRecorder && mediaRecorder.state === 'recording') {
+        mediaRecorder.stop();
+        return;
+      }
+      hideError('mic-error');
+      recordedChunks = [];
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
+        mediaRecorder.ondataavailable = e => { if (e.data.size > 0) recordedChunks.push(e.data); };
+        mediaRecorder.onstop = () => {
+          recordedBlob = new Blob(recordedChunks, { type: 'audio/webm' });
+          const url = URL.createObjectURL(recordedBlob);
+          const preview = document.getElementById('audio-preview');
+          preview.src = url; preview.style.display = 'block';
+          document.getElementById('btn-mic-submit').style.display = 'block';
+          document.getElementById('btn-mic').textContent = '🔄 Record Again';
+          document.getElementById('btn-mic').classList.remove('recording');
+          document.getElementById('mic-status').textContent = '✅ Recording complete. Preview below.';
+          stream.getTracks().forEach(t => t.stop());
+        };
+        mediaRecorder.start();
+        document.getElementById('btn-mic').textContent = '⏹️ Stop Recording';
+        document.getElementById('btn-mic').classList.add('recording');
+        document.getElementById('mic-status').textContent = '🔴 Recording…';
+      } catch (e) {
+        showError('mic-error', 'Microphone access denied. Please allow mic access in your browser.');
+      }
+    }
+
+    async function submitMic() {
+      if (!recordedBlob) { showError('mic-error', 'No recording found.'); return; }
+      hideError('mic-error');
+      document.getElementById('btn-mic-submit').disabled = true;
+      showLoader();
+      try {
+        const form = new FormData();
+        form.append('audio', recordedBlob, 'recording.webm');
+        const res = await fetch('/process-audio', { method: 'POST', body: form });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || 'Server error');
+        renderResults(data);
+      } catch (e) {
+        hideLoader();
+        showError('mic-error', e.message);
+      } finally {
+        document.getElementById('btn-mic-submit').disabled = false;
+      }
+    }
+
+    /* ── Drag & drop ── */
+    const dz = document.getElementById('drop-zone');
+    dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over'); });
+    dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'));
+    dz.addEventListener('drop', e => {
+      e.preventDefault(); dz.classList.remove('drag-over');
+      const file = e.dataTransfer.files[0];
+      if (file) {
+        document.getElementById('audio-file').files = e.dataTransfer.files;
+        onFileSelect({ target: { files: [file] } });
+      }
+    });
+
+    /* ── Enter key submit for text ── */
+    document.getElementById('text-input').addEventListener('keydown', e => {
+      if (e.ctrlKey && e.key === 'Enter') submitText();
+    });
+
+    // ── Export Tasks to Google Sheets ──
+    async function exportTasksToSheets() {
+      const btn = document.getElementById('btn-export-sheets');
+      const successDiv = document.getElementById('export-success');
+      const errorBox = document.getElementById('export-error');
+
+      // Reset state
+      successDiv.style.display = 'none';
+      errorBox.style.display = 'none';
+      errorBox.textContent = '';
+
+      if (!currentTasks || currentTasks.length === 0) {
+        errorBox.textContent = '⚠️ No tasks to export.';
+        errorBox.style.display = 'block';
+        return;
+      }
+
+      btn.disabled = true;
+      const originalText = btn.innerHTML;
+      btn.innerHTML = `⌛ Assigning tasks to Google Sheet...`;
+
+      try {
+        const res = await fetch('/sheets/export', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tasks: currentTasks })
+        });
+
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.detail || 'Failed to export to Google Sheet');
+        }
+
+        // Show success state
+        btn.innerHTML = `✅ Assigned to Google Sheet!`;
+        btn.style.background = 'var(--success)';
+        successDiv.style.display = 'block';
+
+        // Reset button after 4 seconds
+        setTimeout(() => {
+          btn.innerHTML = originalText;
+          btn.disabled = false;
+          btn.style.background = 'linear-gradient(135deg, #10b981, #047857)';
+        }, 4000);
+
+      } catch (e) {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+        errorBox.textContent = '⚠️ Export Error: ' + e.message;
+        errorBox.style.display = 'block';
+      }
+    }
+
+    // Initial load
+    window.addEventListener('DOMContentLoaded', () => {
+      loadEmployees();
+    });
+  </script>
+</body>
+
+</html>

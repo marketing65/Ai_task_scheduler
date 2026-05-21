@@ -1,0 +1,25 @@
+# ── Core Web Framework ────────────────────────────────────────
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+python-multipart==0.0.20
+watchfiles==0.21.0
+
+# ── OpenAI Integration (GPT + Whisper) ────────────────────────
+openai==1.58.1
+
+# ── Google Integration (Sheets + Drive) ────────────────────────
+gspread==6.1.2
+google-auth==2.35.0
+
+# ── Environment & Config ──────────────────────────────────────
+python-dotenv==1.0.1
+pydantic==2.10.4
+pydantic-settings==2.7.1
+
+# ── Date & Text Processing ────────────────────────────────────
+python-dateutil==2.9.0.post0
+
+# ── Development & Testing ──────────────────────────────────────
+httpx==0.28.1
+pytest==8.3.4
+pytest-asyncio==0.25.0

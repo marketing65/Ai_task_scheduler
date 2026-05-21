@@ -1,0 +1,33 @@
+# Environments & Secrets
+.env
+.env.*
+!.env.example
+*.json
+!app/data/*.json
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Testing & Caching
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.pytest_cache/
+
+# Local static attachments (only keep test dummy)
+app/static/attachments/*
+!app/static/attachments/test_dummy.txt
+
+# Editor & OS files
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+.DS_Store
+Thumbs.db
