@@ -3,13 +3,15 @@
 
 <head>
   <meta charset="UTF-8" />
+  <meta name="google-site-verification" content="fHGv5xYcahbry9pDz82-BOBDGLvLBdQ_T2JouF0qJzI" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AI Task Manager – Hindi / Hinglish / English</title>
   <meta name="description"
     content="AI-powered task management: convert voice or text in Hindi, Hinglish, or English into structured tasks instantly." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
-    rel="stylesheet" />  <style>
+    rel="stylesheet" />
+  <style>
     *,
     *::before,
     *::after {
@@ -90,16 +92,33 @@
     }
 
     @keyframes floatGlow1 {
-      0% { transform: translate(0, 0) scale(1); }
-      100% { transform: translate(-100px, 80px) scale(1.2); }
+      0% {
+        transform: translate(0, 0) scale(1);
+      }
+
+      100% {
+        transform: translate(-100px, 80px) scale(1.2);
+      }
     }
+
     @keyframes floatGlow2 {
-      0% { transform: translate(0, 0) scale(1.1); }
-      100% { transform: translate(120px, -90px) scale(0.9); }
+      0% {
+        transform: translate(0, 0) scale(1.1);
+      }
+
+      100% {
+        transform: translate(120px, -90px) scale(0.9);
+      }
     }
+
     @keyframes floatGlow3 {
-      0% { transform: translate(0, 0) scale(0.9); }
-      100% { transform: translate(-60px, -60px) scale(1.15); }
+      0% {
+        transform: translate(0, 0) scale(0.9);
+      }
+
+      100% {
+        transform: translate(-60px, -60px) scale(1.15);
+      }
     }
 
     /* ── High-End Dashboard Grid Layout ── */
@@ -211,9 +230,20 @@
     }
 
     @keyframes pulse {
-      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
-      70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
-      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+      0% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+      }
+
+      70% {
+        transform: scale(1);
+        box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
+      }
+
+      100% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+      }
     }
 
     .status-detail {
@@ -396,6 +426,7 @@
       .workspace-split.show-inputs .workspace-right {
         display: none !important;
       }
+
       .workspace-split.show-results .workspace-left {
         display: none !important;
       }
@@ -705,9 +736,17 @@
     }
 
     @keyframes micPulse {
-      0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5); }
-      70% { box-shadow: 0 0 0 20px rgba(239, 68, 68, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+      0% {
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5);
+      }
+
+      70% {
+        box-shadow: 0 0 0 20px rgba(239, 68, 68, 0);
+      }
+
+      100% {
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+      }
     }
 
     /* Error Box */
@@ -858,7 +897,9 @@
     }
 
     @keyframes spin {
-      to { transform: rotate(360deg); }
+      to {
+        transform: rotate(360deg);
+      }
     }
 
     .loader p {
@@ -1190,23 +1231,55 @@
 
     /* Animations */
     @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
     }
+
     @keyframes spin {
-      to { transform: rotate(360deg); }
+      to {
+        transform: rotate(360deg);
+      }
     }
+
     @keyframes slideUp {
-      from { transform: translateY(20px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
+      from {
+        transform: translateY(20px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
     }
+
     @keyframes scaleUp {
-      from { transform: scale(0.95); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
+      from {
+        transform: scale(0.95);
+        opacity: 0;
+      }
+
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
     }
+
     @keyframes cardAppear {
-      from { transform: scale(0.92) translateY(15px); opacity: 0; }
-      to { transform: scale(1) translateY(0); opacity: 1; }
+      from {
+        transform: scale(0.92) translateY(15px);
+        opacity: 0;
+      }
+
+      to {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+      }
     }
 
     /* Card Select and Warning */
@@ -1252,7 +1325,9 @@
   </style>
 
 
-</head><body>
+</head>
+
+<body>
 
   <!-- Animating background mesh blows -->
   <div class="mesh-glow mesh-glow-1"></div>
@@ -1333,16 +1408,17 @@
           ✏️ Workspace Inputs
         </button>
         <button class="view-switcher-btn" id="btn-view-results" onclick="switchMobileView('results')">
-          📋 Extracted Tasks <span id="mobile-task-badge" style="background: rgba(226, 116, 25, 0.15); color: var(--accent); border-radius: 99px; padding: 2px 8px; font-size: 0.72rem; font-weight: 800; margin-left: 4px; display: none;">0</span>
+          📋 Extracted Tasks <span id="mobile-task-badge"
+            style="background: rgba(226, 116, 25, 0.15); color: var(--accent); border-radius: 99px; padding: 2px 8px; font-size: 0.72rem; font-weight: 800; margin-left: 4px; display: none;">0</span>
         </button>
       </div>
 
       <!-- Workspace Container -->
       <div class="workspace-split show-inputs" id="workspace-container">
-        
+
         <!-- Left Column: Inputs & Tools -->
         <div class="workspace-left">
-          
+
           <!-- Tabs Bar -->
           <div class="tabs">
             <button class="tab-btn active" id="tab-text" onclick="switchTab('text')">
@@ -1366,11 +1442,14 @@
               <textarea id="text-input"
                 placeholder="Type in Hindi, Hinglish, or English…&#10;&#10;Example: Mukesh sir ne bola Rahul ko HR department mein documents submit karne hain aur last date 25 अप्रैल है।"></textarea>
 
-              <div class="attachment-trigger-wrapper" style="margin-top: 18px; display: flex; flex-direction: column; gap: 8px; width: 100%;">
-                <label for="text-attachment-link" style="font-size: 0.85rem; font-weight: 600; color: var(--muted); display: flex; align-items: center; gap: 6px;">
+              <div class="attachment-trigger-wrapper"
+                style="margin-top: 18px; display: flex; flex-direction: column; gap: 8px; width: 100%;">
+                <label for="text-attachment-link"
+                  style="font-size: 0.85rem; font-weight: 600; color: var(--muted); display: flex; align-items: center; gap: 6px;">
                   🔗 Attachment Link (Optional URL)
                 </label>
-                <input type="url" id="text-attachment-link" placeholder="Paste Google Drive, Dropbox, or any web URL here…"
+                <input type="url" id="text-attachment-link"
+                  placeholder="Paste Google Drive, Dropbox, or any web URL here…"
                   style="width: 100%; background: rgba(255, 255, 255, 0.7); border: 1.5px solid var(--border); border-radius: 10px; padding: 12px 14px; color: var(--text); font-family: inherit; font-size: 0.9rem; outline: none; transition: var(--transition);" />
               </div>
 
@@ -1392,13 +1471,16 @@
             <div class="card">
               <label>Upload Audio File</label>
               <div class="drop-zone" id="drop-zone">
-                <input type="file" id="audio-file" accept=".mp3,.wav,.m4a,.webm,.ogg,.flac" onchange="onFileSelect(event)" />
+                <input type="file" id="audio-file" accept=".mp3,.wav,.m4a,.webm,.ogg,.flac"
+                  onchange="onFileSelect(event)" />
                 <div class="drop-icon">🎵</div>
                 <div class="drop-text"><strong>Click to browse</strong> or drag & drop</div>
-                <div class="drop-text" style="margin-top:6px;font-size:0.78rem;">MP3 · WAV · M4A · WEBM · OGG · FLAC (max 25MB)</div>
+                <div class="drop-text" style="margin-top:6px;font-size:0.78rem;">MP3 · WAV · M4A · WEBM · OGG · FLAC
+                  (max 25MB)</div>
               </div>
               <div class="file-selected" id="file-selected">✅ <span id="file-name"></span></div>
-              <button class="btn-primary" id="btn-audio-submit" onclick="submitAudio()" disabled style="margin-top: 20px;">
+              <button class="btn-primary" id="btn-audio-submit" onclick="submitAudio()" disabled
+                style="margin-top: 20px;">
                 🎯 Transcribe & Extract Tasks
               </button>
               <div class="error-box" id="audio-error"></div>
@@ -1408,13 +1490,18 @@
           <!-- MIC TAB panel -->
           <div id="panel-mic" style="display:none;">
             <div class="card" style="text-align:center;">
-              <p style="color:var(--muted);margin-bottom:24px;font-size:0.9rem;">Record your voice directly from the browser</p>
+              <p style="color:var(--muted);margin-bottom:24px;font-size:0.9rem;">Record your voice directly from the
+                browser</p>
               <button class="btn-mic" id="btn-mic" onclick="toggleRecording()">
                 🎙️
               </button>
-              <div id="mic-status" style="margin-top:20px;color:var(--text);font-weight: 600;font-size:0.88rem;min-height:24px;">Click to Start Recording</div>
-              <audio id="audio-preview" controls style="display:none;margin-top:16px;width:100%;border-radius:8px;"></audio>
-              <button class="btn-primary" id="btn-mic-submit" onclick="submitMic()" style="display:none;margin-top:20px;">
+              <div id="mic-status"
+                style="margin-top:20px;color:var(--text);font-weight: 600;font-size:0.88rem;min-height:24px;">Click to
+                Start Recording</div>
+              <audio id="audio-preview" controls
+                style="display:none;margin-top:16px;width:100%;border-radius:8px;"></audio>
+              <button class="btn-primary" id="btn-mic-submit" onclick="submitMic()"
+                style="display:none;margin-top:20px;">
                 ⚡ Extract Tasks from Recording
               </button>
               <div class="error-box" id="mic-error"></div>
@@ -1427,7 +1514,9 @@
               <div class="emp-grid">
                 <!-- Requesters Column -->
                 <div>
-                  <div class="emp-section-title">👔 Requesters <span style="color:var(--muted);font-size:0.72rem;font-weight:400;margin-left:4px;">(Task Assigners)</span></div>
+                  <div class="emp-section-title">👔 Requesters <span
+                      style="color:var(--muted);font-size:0.72rem;font-weight:400;margin-left:4px;">(Task
+                      Assigners)</span></div>
                   <div class="emp-add-form">
                     <div class="emp-add-row">
                       <input type="text" id="req-add-name" placeholder="Requester name…" />
@@ -1439,7 +1528,9 @@
 
                 <!-- Doers Column -->
                 <div>
-                  <div class="emp-section-title">👷 Doers <span style="color:var(--muted);font-size:0.72rem;font-weight:400;margin-left:4px;">(Task Performers)</span></div>
+                  <div class="emp-section-title">👷 Doers <span
+                      style="color:var(--muted);font-size:0.72rem;font-weight:400;margin-left:4px;">(Task
+                      Performers)</span></div>
                   <div class="emp-add-form">
                     <div class="emp-add-row">
                       <input type="text" id="doer-add-name" placeholder="Employee name…" />
@@ -1457,7 +1548,7 @@
             <div class="spinner"></div>
             <p>AI is processing your request…</p>
           </div>
-          
+
         </div>
 
         <!-- Right Column: Results section -->
@@ -1470,20 +1561,23 @@
                 <div class="meta-chip" id="meta-time">⏱️ 0ms</div>
               </div>
             </div>
-            
+
             <div class="input-preview">
               <strong>📝 Processed Input</strong>
-              <span id="input-preview-text">No instructions processed yet. Send some text or record voice on the left.</span>
+              <span id="input-preview-text">No instructions processed yet. Send some text or record voice on the
+                left.</span>
             </div>
-            
+
             <div id="tasks-container"></div>
-            
+
             <!-- Google Sheets Sync Status Section -->
             <div id="export-section" style="margin-top: 32px; text-align: center;">
-              <div id="export-syncing" style="display: none; padding: 14px; background: rgba(226, 116, 25, 0.08); border: 1px solid rgba(226, 116, 25, 0.2); border-radius: 10px; color: var(--accent); font-size: 0.92rem; font-weight: 700; animation: fadeIn 0.3s;">
+              <div id="export-syncing"
+                style="display: none; padding: 14px; background: rgba(226, 116, 25, 0.08); border: 1px solid rgba(226, 116, 25, 0.2); border-radius: 10px; color: var(--accent); font-size: 0.92rem; font-weight: 700; animation: fadeIn 0.3s;">
                 ⌛ Syncing tasks to Google Sheet...
               </div>
-              <div id="export-success" style="display: none; margin-top: 14px; padding: 14px; background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 10px; color: var(--success); font-size: 0.92rem; font-weight: 700;">
+              <div id="export-success"
+                style="display: none; margin-top: 14px; padding: 14px; background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 10px; color: var(--success); font-size: 0.92rem; font-weight: 700;">
                 🎉 Successfully synced all tasks to the Google Sheet!
               </div>
               <div class="error-box" id="export-error" style="margin-top: 14px; text-align: left;"></div>
@@ -2147,7 +2241,7 @@
       const container = document.getElementById('workspace-container');
       const btnInputs = document.getElementById('btn-view-inputs');
       const btnResults = document.getElementById('btn-view-results');
-      
+
       if (!container || !btnInputs || !btnResults) return;
 
       if (view === 'inputs') {
