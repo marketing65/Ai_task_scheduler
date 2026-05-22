@@ -310,14 +310,94 @@
       display: flex;
       flex-direction: column;
       gap: 28px;
-      max-width: 1300px;
+      max-width: 1400px;
       width: 100%;
       margin: 0 auto;
     }
 
     @media (max-width: 1024px) {
       main.main-content {
-        padding: 30px 20px;
+        padding: 24px 16px;
+        gap: 20px;
+      }
+    }
+
+    /* Workspace Split Grid */
+    .workspace-split {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 28px;
+      align-items: start;
+    }
+
+    .workspace-left {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .workspace-right {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* Mobile Segmented View Switcher */
+    .view-switcher-mobile {
+      display: none;
+    }
+
+    @media (max-width: 1024px) {
+      .workspace-split {
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }
+
+      .view-switcher-mobile {
+        display: flex;
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 4px;
+        gap: 4px;
+        position: sticky;
+        top: 10px;
+        z-index: 100;
+        box-shadow: 0 4px 20px rgba(180, 160, 140, 0.06);
+      }
+
+      .view-switcher-btn {
+        flex: 1;
+        padding: 12px;
+        border: none;
+        background: transparent;
+        color: var(--muted);
+        font-family: inherit;
+        font-size: 0.85rem;
+        font-weight: 700;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      .view-switcher-btn.active {
+        background: linear-gradient(135deg, var(--accent), #c05e10);
+        color: #fff;
+        box-shadow: 0 4px 12px var(--accent-glow);
+      }
+
+      /* Visibility rules based on active workspace state on mobile */
+      .workspace-split.show-inputs .workspace-right {
+        display: none !important;
+      }
+      .workspace-split.show-results .workspace-left {
+        display: none !important;
       }
     }
 
@@ -1247,147 +1327,170 @@
         </div>
       </div>
 
-      <!-- Tabs Bar -->
-      <div class="tabs">
-        <button class="tab-btn active" id="tab-text" onclick="switchTab('text')">
-          ✏️ Text Input
+      <!-- Segmented Switcher for Mobile only -->
+      <div class="view-switcher-mobile" id="mobile-view-switcher">
+        <button class="view-switcher-btn active" id="btn-view-inputs" onclick="switchMobileView('inputs')">
+          ✏️ Workspace Inputs
         </button>
-        <button class="tab-btn" id="tab-audio" onclick="switchTab('audio')">
-          🎵 Audio File
-        </button>
-        <button class="tab-btn" id="tab-mic" onclick="switchTab('mic')">
-          🎙️ Record Voice
-        </button>
-        <button class="tab-btn" id="tab-employees" onclick="switchTab('employees')">
-          👥 Manage Employees
+        <button class="view-switcher-btn" id="btn-view-results" onclick="switchMobileView('results')">
+          📋 Extracted Tasks <span id="mobile-task-badge" style="background: rgba(226, 116, 25, 0.15); color: var(--accent); border-radius: 99px; padding: 2px 8px; font-size: 0.72rem; font-weight: 800; margin-left: 4px; display: none;">0</span>
         </button>
       </div>
 
-      <!-- TEXT TAB panel -->
-      <div id="panel-text">
-        <div class="card">
-          <label for="text-input">Your Instruction</label>
-          <textarea id="text-input"
-            placeholder="Type in Hindi, Hinglish, or English…&#10;&#10;Example: Mukesh sir ne bola Rahul ko HR department mein documents submit karne hain aur last date 25 अप्रैल है।"></textarea>
-
-          <div class="attachment-trigger-wrapper" style="margin-top: 18px; display: flex; flex-direction: column; gap: 8px; width: 100%;">
-            <label for="text-attachment-link" style="font-size: 0.85rem; font-weight: 600; color: var(--muted); display: flex; align-items: center; gap: 6px;">
-              🔗 Attachment Link (Optional URL)
-            </label>
-            <input type="url" id="text-attachment-link" placeholder="Paste Google Drive, Dropbox, or any web URL here…"
-              style="width: 100%; background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; color: var(--text); font-family: inherit; font-size: 0.9rem; outline: none; transition: var(--transition);" />
-          </div>
-
-
-          <div class="examples">
-            <span class="example-pill" onclick="fillExample(0)">Hindi Example</span>
-            <span class="example-pill" onclick="fillExample(1)">Hinglish Example</span>
-            <span class="example-pill" onclick="fillExample(2)">English Example</span>
-          </div>
-
-          <button class="btn-primary" id="btn-text-submit" onclick="submitText()">
-            ⚡ Extract Tasks
-          </button>
-          <div class="error-box" id="text-error"></div>
-        </div>
-      </div>
-
-      <!-- AUDIO TAB panel -->
-      <div id="panel-audio" style="display:none;">
-        <div class="card">
-          <label>Upload Audio File</label>
-          <div class="drop-zone" id="drop-zone">
-            <input type="file" id="audio-file" accept=".mp3,.wav,.m4a,.webm,.ogg,.flac" onchange="onFileSelect(event)" />
-            <div class="drop-icon">🎵</div>
-            <div class="drop-text"><strong>Click to browse</strong> or drag & drop</div>
-            <div class="drop-text" style="margin-top:6px;font-size:0.78rem;">MP3 · WAV · M4A · WEBM · OGG · FLAC (max 25MB)</div>
-          </div>
-          <div class="file-selected" id="file-selected">✅ <span id="file-name"></span></div>
-          <button class="btn-primary" id="btn-audio-submit" onclick="submitAudio()" disabled style="margin-top: 20px;">
-            🎯 Transcribe & Extract Tasks
-          </button>
-          <div class="error-box" id="audio-error"></div>
-        </div>
-      </div>
-
-      <!-- MIC TAB panel -->
-      <div id="panel-mic" style="display:none;">
-        <div class="card" style="text-align:center;">
-          <p style="color:var(--muted);margin-bottom:24px;font-size:0.9rem;">Record your voice directly from the browser</p>
-          <button class="btn-mic" id="btn-mic" onclick="toggleRecording()">
-            🎙️
-          </button>
-          <div id="mic-status" style="margin-top:20px;color:var(--text);font-weight: 600;font-size:0.88rem;min-height:24px;">Click to Start Recording</div>
-          <audio id="audio-preview" controls style="display:none;margin-top:16px;width:100%;border-radius:8px;"></audio>
-          <button class="btn-primary" id="btn-mic-submit" onclick="submitMic()" style="display:none;margin-top:20px;">
-            ⚡ Extract Tasks from Recording
-          </button>
-          <div class="error-box" id="mic-error"></div>
-        </div>
-      </div>
-
-      <!-- EMPLOYEES TAB panel -->
-      <div id="panel-employees" style="display:none;">
-        <div class="card">
-          <div class="emp-grid">
-            <!-- Requesters Column -->
-            <div>
-              <div class="emp-section-title">👔 Requesters <span style="color:var(--muted);font-size:0.72rem;font-weight:400;margin-left:4px;">(Task Assigners)</span></div>
-              <div class="emp-add-form">
-                <div class="emp-add-row">
-                  <input type="text" id="req-add-name" placeholder="Requester name…" />
-                  <button class="btn-emp-add" onclick="addRequester()">+ Add</button>
-                </div>
-              </div>
-              <div class="emp-list" id="req-list"></div>
-            </div>
-
-            <!-- Doers Column -->
-            <div>
-              <div class="emp-section-title">👷 Doers <span style="color:var(--muted);font-size:0.72rem;font-weight:400;margin-left:4px;">(Task Performers)</span></div>
-              <div class="emp-add-form">
-                <div class="emp-add-row">
-                  <input type="text" id="doer-add-name" placeholder="Employee name…" />
-                  <button class="btn-emp-add" onclick="addDoer()">+ Add</button>
-                </div>
-              </div>
-              <div class="emp-list" id="doer-list"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Loader (Premium blur design) -->
-      <div class="loader" id="loader">
-        <div class="spinner"></div>
-        <p>AI is processing your request…</p>
-      </div>
-
-      <!-- Results section -->
-      <div id="results">
-        <div class="result-header">
-          <h2>📋 Extracted Tasks</h2>
-          <div class="result-meta">
-            <div class="meta-chip" id="meta-count">🗂️ 0 tasks</div>
-            <div class="meta-chip" id="meta-time">⏱️ 0ms</div>
-          </div>
-        </div>
-        <div class="input-preview">
-          <strong>📝 Processed Input</strong>
-          <span id="input-preview-text"></span>
-        </div>
-        <div id="tasks-container"></div>
+      <!-- Workspace Container -->
+      <div class="workspace-split show-inputs" id="workspace-container">
         
-        <!-- Google Sheets Sync Status Section -->
-        <div id="export-section" style="margin-top: 32px; text-align: center;">
-          <div id="export-syncing" style="display: none; padding: 14px; background: rgba(226, 116, 25, 0.08); border: 1px solid rgba(226, 116, 25, 0.2); border-radius: 10px; color: var(--accent); font-size: 0.92rem; font-weight: 700; animation: fadeIn 0.3s;">
-            ⌛ Syncing tasks to Google Sheet...
+        <!-- Left Column: Inputs & Tools -->
+        <div class="workspace-left">
+          
+          <!-- Tabs Bar -->
+          <div class="tabs">
+            <button class="tab-btn active" id="tab-text" onclick="switchTab('text')">
+              ✏️ Text Input
+            </button>
+            <button class="tab-btn" id="tab-audio" onclick="switchTab('audio')">
+              🎵 Audio File
+            </button>
+            <button class="tab-btn" id="tab-mic" onclick="switchTab('mic')">
+              🎙️ Record Voice
+            </button>
+            <button class="tab-btn" id="tab-employees" onclick="switchTab('employees')">
+              👥 Manage Employees
+            </button>
           </div>
-          <div id="export-success" style="display: none; margin-top: 14px; padding: 14px; background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 10px; color: var(--success); font-size: 0.92rem; font-weight: 700;">
-            🎉 Successfully synced all tasks to the Google Sheet!
+
+          <!-- TEXT TAB panel -->
+          <div id="panel-text">
+            <div class="card">
+              <label for="text-input">Your Instruction</label>
+              <textarea id="text-input"
+                placeholder="Type in Hindi, Hinglish, or English…&#10;&#10;Example: Mukesh sir ne bola Rahul ko HR department mein documents submit karne hain aur last date 25 अप्रैल है।"></textarea>
+
+              <div class="attachment-trigger-wrapper" style="margin-top: 18px; display: flex; flex-direction: column; gap: 8px; width: 100%;">
+                <label for="text-attachment-link" style="font-size: 0.85rem; font-weight: 600; color: var(--muted); display: flex; align-items: center; gap: 6px;">
+                  🔗 Attachment Link (Optional URL)
+                </label>
+                <input type="url" id="text-attachment-link" placeholder="Paste Google Drive, Dropbox, or any web URL here…"
+                  style="width: 100%; background: rgba(255, 255, 255, 0.7); border: 1.5px solid var(--border); border-radius: 10px; padding: 12px 14px; color: var(--text); font-family: inherit; font-size: 0.9rem; outline: none; transition: var(--transition);" />
+              </div>
+
+              <div class="examples">
+                <span class="example-pill" onclick="fillExample(0)">Hindi Example</span>
+                <span class="example-pill" onclick="fillExample(1)">Hinglish Example</span>
+                <span class="example-pill" onclick="fillExample(2)">English Example</span>
+              </div>
+
+              <button class="btn-primary" id="btn-text-submit" onclick="submitText()">
+                ⚡ Extract Tasks
+              </button>
+              <div class="error-box" id="text-error"></div>
+            </div>
           </div>
-          <div class="error-box" id="export-error" style="margin-top: 14px; text-align: left;"></div>
+
+          <!-- AUDIO TAB panel -->
+          <div id="panel-audio" style="display:none;">
+            <div class="card">
+              <label>Upload Audio File</label>
+              <div class="drop-zone" id="drop-zone">
+                <input type="file" id="audio-file" accept=".mp3,.wav,.m4a,.webm,.ogg,.flac" onchange="onFileSelect(event)" />
+                <div class="drop-icon">🎵</div>
+                <div class="drop-text"><strong>Click to browse</strong> or drag & drop</div>
+                <div class="drop-text" style="margin-top:6px;font-size:0.78rem;">MP3 · WAV · M4A · WEBM · OGG · FLAC (max 25MB)</div>
+              </div>
+              <div class="file-selected" id="file-selected">✅ <span id="file-name"></span></div>
+              <button class="btn-primary" id="btn-audio-submit" onclick="submitAudio()" disabled style="margin-top: 20px;">
+                🎯 Transcribe & Extract Tasks
+              </button>
+              <div class="error-box" id="audio-error"></div>
+            </div>
+          </div>
+
+          <!-- MIC TAB panel -->
+          <div id="panel-mic" style="display:none;">
+            <div class="card" style="text-align:center;">
+              <p style="color:var(--muted);margin-bottom:24px;font-size:0.9rem;">Record your voice directly from the browser</p>
+              <button class="btn-mic" id="btn-mic" onclick="toggleRecording()">
+                🎙️
+              </button>
+              <div id="mic-status" style="margin-top:20px;color:var(--text);font-weight: 600;font-size:0.88rem;min-height:24px;">Click to Start Recording</div>
+              <audio id="audio-preview" controls style="display:none;margin-top:16px;width:100%;border-radius:8px;"></audio>
+              <button class="btn-primary" id="btn-mic-submit" onclick="submitMic()" style="display:none;margin-top:20px;">
+                ⚡ Extract Tasks from Recording
+              </button>
+              <div class="error-box" id="mic-error"></div>
+            </div>
+          </div>
+
+          <!-- EMPLOYEES TAB panel -->
+          <div id="panel-employees" style="display:none;">
+            <div class="card">
+              <div class="emp-grid">
+                <!-- Requesters Column -->
+                <div>
+                  <div class="emp-section-title">👔 Requesters <span style="color:var(--muted);font-size:0.72rem;font-weight:400;margin-left:4px;">(Task Assigners)</span></div>
+                  <div class="emp-add-form">
+                    <div class="emp-add-row">
+                      <input type="text" id="req-add-name" placeholder="Requester name…" />
+                      <button class="btn-emp-add" onclick="addRequester()">+ Add</button>
+                    </div>
+                  </div>
+                  <div class="emp-list" id="req-list"></div>
+                </div>
+
+                <!-- Doers Column -->
+                <div>
+                  <div class="emp-section-title">👷 Doers <span style="color:var(--muted);font-size:0.72rem;font-weight:400;margin-left:4px;">(Task Performers)</span></div>
+                  <div class="emp-add-form">
+                    <div class="emp-add-row">
+                      <input type="text" id="doer-add-name" placeholder="Employee name…" />
+                      <button class="btn-emp-add" onclick="addDoer()">+ Add</button>
+                    </div>
+                  </div>
+                  <div class="emp-list" id="doer-list"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Loader (Premium blur design) -->
+          <div class="loader" id="loader">
+            <div class="spinner"></div>
+            <p>AI is processing your request…</p>
+          </div>
+          
         </div>
+
+        <!-- Right Column: Results section -->
+        <div class="workspace-right">
+          <div id="results" class="card" style="padding: 24px;">
+            <div class="result-header">
+              <h2>📋 Extracted Tasks</h2>
+              <div class="result-meta">
+                <div class="meta-chip" id="meta-count">🗂️ 0 tasks</div>
+                <div class="meta-chip" id="meta-time">⏱️ 0ms</div>
+              </div>
+            </div>
+            
+            <div class="input-preview">
+              <strong>📝 Processed Input</strong>
+              <span id="input-preview-text">No instructions processed yet. Send some text or record voice on the left.</span>
+            </div>
+            
+            <div id="tasks-container"></div>
+            
+            <!-- Google Sheets Sync Status Section -->
+            <div id="export-section" style="margin-top: 32px; text-align: center;">
+              <div id="export-syncing" style="display: none; padding: 14px; background: rgba(226, 116, 25, 0.08); border: 1px solid rgba(226, 116, 25, 0.2); border-radius: 10px; color: var(--accent); font-size: 0.92rem; font-weight: 700; animation: fadeIn 0.3s;">
+                ⌛ Syncing tasks to Google Sheet...
+              </div>
+              <div id="export-success" style="display: none; margin-top: 14px; padding: 14px; background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 10px; color: var(--success); font-size: 0.92rem; font-weight: 700;">
+                🎉 Successfully synced all tasks to the Google Sheet!
+              </div>
+              <div class="error-box" id="export-error" style="margin-top: 14px; text-align: left;"></div>
+            </div>
+          </div>
+        </div>
+
       </div>
 
     </main>
@@ -1608,6 +1711,20 @@
       }
 
       refreshTaskCards(data ? data.processing_time_ms : 0, data ? data.input_text : '');
+
+      // Update mobile view task count badge
+      const badge = document.getElementById('mobile-task-badge');
+      if (badge) {
+        if (currentTasks.length > 0) {
+          badge.textContent = currentTasks.length;
+          badge.style.display = 'inline-block';
+        } else {
+          badge.style.display = 'none';
+        }
+      }
+
+      // Smooth switch mobile view to 'results' so they instantly see tasks without scrolling
+      switchMobileView('results');
 
       // Auto-sync if all tasks are already confirmed (no manual confirmation needed)
       const anyNeedsConfirmation = currentTasks.some(t => t.requires_confirmation);
@@ -2022,6 +2139,27 @@
         syncingDiv.style.display = 'none';
         errorBox.textContent = '⚠️ Sync Error: ' + e.message;
         errorBox.style.display = 'block';
+      }
+    }
+
+    // Mobile segmented view switcher helper
+    function switchMobileView(view) {
+      const container = document.getElementById('workspace-container');
+      const btnInputs = document.getElementById('btn-view-inputs');
+      const btnResults = document.getElementById('btn-view-results');
+      
+      if (!container || !btnInputs || !btnResults) return;
+
+      if (view === 'inputs') {
+        container.classList.remove('show-results');
+        container.classList.add('show-inputs');
+        btnInputs.classList.add('active');
+        btnResults.classList.remove('active');
+      } else {
+        container.classList.remove('show-inputs');
+        container.classList.add('show-results');
+        btnResults.classList.add('active');
+        btnInputs.classList.remove('active');
       }
     }
 
