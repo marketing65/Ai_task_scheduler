@@ -1204,7 +1204,7 @@
           <li>Type instructions in English, Hindi, or Hinglish.</li>
           <li>Or upload voice notes / record direct audio.</li>
           <li>AI will extract structured task fields, assign personnel, and upload attachments to Google Drive.</li>
-          <li>Click <strong>Assign Tasks to Google Sheet</strong> to sync.</li>
+          <li>Click <strong>Confirm & Sync to Sheet</strong> to confirm and auto-sync.</li>
         </ul>
       </div>
 
@@ -1372,13 +1372,13 @@
         </div>
         <div id="tasks-container"></div>
         
-        <!-- Google Sheets Sync Section -->
+        <!-- Google Sheets Sync Status Section -->
         <div id="export-section" style="margin-top: 32px; text-align: center;">
-          <button class="btn-primary" id="btn-export-sheets" onclick="exportTasksToSheets()" style="background: linear-gradient(135deg, #10b981, #047857); box-shadow: 0 4px 20px rgba(16, 185, 129, 0.35); border: none; max-width: 320px; margin: 0 auto;">
-            🟢 Assign Tasks to Google Sheet
-          </button>
+          <div id="export-syncing" style="display: none; padding: 14px; background: rgba(226, 116, 25, 0.08); border: 1px solid rgba(226, 116, 25, 0.2); border-radius: 10px; color: var(--accent); font-size: 0.92rem; font-weight: 700; animation: fadeIn 0.3s;">
+            ⌛ Syncing tasks to Google Sheet...
+          </div>
           <div id="export-success" style="display: none; margin-top: 14px; padding: 14px; background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 10px; color: var(--success); font-size: 0.92rem; font-weight: 700;">
-            🎉 Successfully assigned all tasks to the Google Sheet!
+            🎉 Successfully synced all tasks to the Google Sheet!
           </div>
           <div class="error-box" id="export-error" style="margin-top: 14px; text-align: left;"></div>
         </div>
@@ -1602,6 +1602,12 @@
       }
 
       refreshTaskCards(data ? data.processing_time_ms : 0, data ? data.input_text : '');
+
+      // Auto-sync if all tasks are already confirmed (no manual confirmation needed)
+      const anyNeedsConfirmation = currentTasks.some(t => t.requires_confirmation);
+      if (!anyNeedsConfirmation && currentTasks.length > 0) {
+        exportTasksToSheets();
+      }
     }
 
     function refreshTaskCards(timeMs = 0, inputText = '') {
@@ -1690,8 +1696,8 @@
           // Names selected from dropdown but not yet confirmed
           badgeHtml = `<span class="badge-warn">⚠️ Pending Confirmation</span>`;
           resolveBtnHtml = `
-            <button class="btn-resolve" style="background: rgba(16,185,129,0.1); border-color: rgb(16,185,129); color: rgb(16,185,129);" onclick="confirmTask(${i})">
-              ✅ Confirm Selection
+            <button class="btn-resolve" style="background: rgba(16,185,129,0.1); border-color: rgb(16,185,129); color: rgb(16,185,129);" onclick="confirmAndSync(${i})">
+              ✅ Confirm & Sync to Sheet
             </button>`;
         } else if (task.requires_confirmation) {
           badgeHtml = `<span class="badge-warn">⚠️ Needs Confirmation</span>`;
@@ -1713,27 +1719,7 @@
         </div>`;
       });
 
-      // Enable or disable Google Sheets sync based on whether any task requires confirmation
-      const anyRequiresConfirmation = currentTasks.some(t => t.requires_confirmation);
-      const exportBtn = document.getElementById('btn-export-sheets');
-      
-      if (anyRequiresConfirmation) {
-        exportBtn.disabled = true;
-        exportBtn.style.opacity = '0.6';
-        exportBtn.style.cursor = 'not-allowed';
-        exportBtn.innerHTML = `⚠️ Confirm Personnel to Sync Sheet`;
-        exportBtn.style.background = 'rgba(255, 255, 255, 0.05)';
-        exportBtn.style.border = '1px solid var(--border)';
-        exportBtn.style.boxShadow = 'none';
-      } else {
-        exportBtn.disabled = false;
-        exportBtn.style.opacity = '1';
-        exportBtn.style.cursor = 'pointer';
-        exportBtn.innerHTML = `🟢 Assign Tasks to Google Sheet`;
-        exportBtn.style.background = 'linear-gradient(135deg, #10b981, #047857)';
-        exportBtn.style.border = 'none';
-        exportBtn.style.boxShadow = '0 4px 20px rgba(16, 185, 129, 0.35)';
-      }
+      // No separate export button — export happens automatically on confirm
 
       document.getElementById('results').style.display = 'block';
       document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -1765,6 +1751,16 @@
       task.requires_confirmation = false;
       task.confirmed_by_user = true;
       refreshTaskCards();
+    }
+
+    async function confirmAndSync(taskIndex) {
+      const task = currentTasks[taskIndex];
+      task.requires_confirmation = false;
+      task.confirmed_by_user = true;
+      refreshTaskCards();
+
+      // Auto-export all tasks (confirmed ones) to Google Sheets
+      await exportTasksToSheets();
     }
 
     async function openConfirmModal(index) {
@@ -1829,7 +1825,7 @@
       currentConfirmIndex = -1;
     }
 
-    function saveConfirmedNames() {
+    async function saveConfirmedNames() {
       if (currentConfirmIndex === -1) return;
 
       const reqSelect = document.getElementById('modal-select-req');
@@ -1846,6 +1842,9 @@
 
       closeConfirmModal();
       refreshTaskCards();
+
+      // Auto-export to Google Sheets after confirming from modal
+      await exportTasksToSheets();
     }
 
     async function submitText() {
@@ -1973,26 +1972,24 @@
       if (e.ctrlKey && e.key === 'Enter') submitText();
     });
 
-    // ── Export Tasks to Google Sheets ──
+    // ── Export Tasks to Google Sheets (auto-triggered on confirm) ──
     async function exportTasksToSheets() {
-      const btn = document.getElementById('btn-export-sheets');
+      const syncingDiv = document.getElementById('export-syncing');
       const successDiv = document.getElementById('export-success');
       const errorBox = document.getElementById('export-error');
 
       // Reset state
+      syncingDiv.style.display = 'block';
       successDiv.style.display = 'none';
       errorBox.style.display = 'none';
       errorBox.textContent = '';
 
       if (!currentTasks || currentTasks.length === 0) {
+        syncingDiv.style.display = 'none';
         errorBox.textContent = '⚠️ No tasks to export.';
         errorBox.style.display = 'block';
         return;
       }
-
-      btn.disabled = true;
-      const originalText = btn.innerHTML;
-      btn.innerHTML = `⌛ Assigning tasks to Google Sheet...`;
 
       try {
         const res = await fetch('/sheets/export', {
@@ -2006,22 +2003,18 @@
           throw new Error(data.detail || 'Failed to export to Google Sheet');
         }
 
-        // Show success state
-        btn.innerHTML = `✅ Assigned to Google Sheet!`;
-        btn.style.background = 'var(--success)';
+        // Show success
+        syncingDiv.style.display = 'none';
         successDiv.style.display = 'block';
 
-        // Reset button after 4 seconds
+        // Auto-hide success after 5 seconds
         setTimeout(() => {
-          btn.innerHTML = originalText;
-          btn.disabled = false;
-          btn.style.background = 'linear-gradient(135deg, #10b981, #047857)';
-        }, 4000);
+          successDiv.style.display = 'none';
+        }, 5000);
 
       } catch (e) {
-        btn.disabled = false;
-        btn.innerHTML = originalText;
-        errorBox.textContent = '⚠️ Export Error: ' + e.message;
+        syncingDiv.style.display = 'none';
+        errorBox.textContent = '⚠️ Sync Error: ' + e.message;
         errorBox.style.display = 'block';
       }
     }
