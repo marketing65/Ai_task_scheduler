@@ -8,13 +8,15 @@ from pydantic import Field, ConfigDict
 from dotenv import load_dotenv
 
 # Load .env file from project root
-load_dotenv()
+from pathlib import Path
+project_root = Path(__file__).parent.parent
+load_dotenv(dotenv_path=project_root / ".env")
 
 
 class Settings(BaseSettings):
     """Application settings loaded from environment variables."""
 
-    model_config = ConfigDict(env_file=".env", env_file_encoding="utf-8")
+    model_config = ConfigDict(env_file=str(project_root / ".env"), env_file_encoding="utf-8")
 
     # ── OpenAI ───────────────────────────────────────────────
     OPENAI_API_KEY: str = Field(
@@ -87,6 +89,16 @@ class Settings(BaseSettings):
     )
 
     
+    # ── Login Credentials ─────────────────────────────────────
+    APP_USERNAME: str = Field(
+        default="admin@akashblowers.com",
+        description="Login email/username for the web app",
+    )
+    APP_PASSWORD: str = Field(
+        default="akash@pass",
+        description="Login password for the web app",
+    )
+
     # ── Public URL ───────────────────────────────────────────
     APP_URL: str = Field(
         default="",

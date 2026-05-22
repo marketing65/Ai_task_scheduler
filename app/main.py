@@ -105,14 +105,16 @@ async def health_check():
     }
 
 
+# ── Page Routes ─────────────────────────────────────────────────
+
 @app.get(
     "/",
     tags=["System"],
-    summary="Root",
+    summary="Dashboard",
     include_in_schema=False,
 )
-async def root():
-    """Serve the frontend UI."""
+async def dashboard_page():
+    """Serve the main dashboard."""
     return FileResponse(STATIC_DIR / "index.html")
 
 

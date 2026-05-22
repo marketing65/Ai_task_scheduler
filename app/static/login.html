@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login — AI Task Manager</title>
+  <meta name="description" content="Sign in to AI Task Manager — Multilingual Task Extraction Suite" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #faf6f1;
+      --bg-dots: rgba(200, 180, 160, 0.25);
+      --surface: rgba(255, 255, 255, 0.75);
+      --surface-hover: rgba(255, 255, 255, 0.9);
+      --surface-solid: #ffffff;
+      --border: rgba(180, 160, 140, 0.25);
+      --border-hover: rgba(226, 116, 25, 0.4);
+      --accent: #E27419;
+      --accent-glow: rgba(226, 116, 25, 0.25);
+      --accent-light: rgba(226, 116, 25, 0.08);
+      --accent2: #3b82f6;
+      --accent2-glow: rgba(59, 130, 246, 0.2);
+      --text: #1a1a2e;
+      --text-secondary: #3d3d56;
+      --muted: #6b7280;
+      --success: #10b981;
+      --error: #ef4444;
+      --radius: 20px;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg);
+      background-image: radial-gradient(circle, var(--bg-dots) 1px, transparent 1px);
+      background-size: 24px 24px;
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Soft warm glows */
+    .glow {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(120px);
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.35;
+    }
+
+    .glow-1 {
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(226, 116, 25, 0.2) 0%, transparent 70%);
+      top: -15%;
+      right: 10%;
+      animation: floatGlow1 20s infinite alternate ease-in-out;
+    }
+
+    .glow-2 {
+      width: 450px;
+      height: 450px;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.12) 0%, transparent 70%);
+      bottom: -10%;
+      left: -5%;
+      animation: floatGlow2 25s infinite alternate ease-in-out;
+    }
+
+    .glow-3 {
+      width: 350px;
+      height: 350px;
+      background: radial-gradient(circle, rgba(245, 158, 11, 0.12) 0%, transparent 70%);
+      top: 50%;
+      left: 50%;
+      animation: floatGlow3 18s infinite alternate ease-in-out;
+    }
+
+    @keyframes floatGlow1 {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(-80px, 60px) scale(1.15); }
+    }
+    @keyframes floatGlow2 {
+      0% { transform: translate(0, 0) scale(1.1); }
+      100% { transform: translate(100px, -70px) scale(0.9); }
+    }
+    @keyframes floatGlow3 {
+      0% { transform: translate(0, 0) scale(0.9); }
+      100% { transform: translate(-50px, -50px) scale(1.1); }
+    }
+
+    /* Login container */
+    .login-container {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 460px;
+      padding: 20px;
+    }
+
+    .login-card {
+      background: var(--surface);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 48px 40px 40px;
+      box-shadow:
+        0 8px 40px rgba(0, 0, 0, 0.06),
+        0 1px 3px rgba(0, 0, 0, 0.04);
+      animation: cardAppear 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes cardAppear {
+      from { transform: scale(0.94) translateY(20px); opacity: 0; }
+      to { transform: scale(1) translateY(0); opacity: 1; }
+    }
+
+    /* Brand header */
+    .brand {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+
+    .brand-icon {
+      width: 72px;
+      height: 72px;
+      margin: 0 auto 18px;
+      background: linear-gradient(135deg, var(--accent), #c05e10);
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      box-shadow: 0 6px 24px var(--accent-glow);
+      animation: iconFloat 3s ease-in-out infinite;
+    }
+
+    @keyframes iconFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+
+    .brand h1 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: var(--text);
+    }
+
+    .brand h1 span {
+      background: linear-gradient(90deg, var(--accent), #c05e10);
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+    }
+
+    .brand p {
+      color: var(--muted);
+      font-size: 0.88rem;
+      margin-top: 6px;
+      font-weight: 500;
+    }
+
+    /* Form */
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--muted);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 14px 16px;
+      background: rgba(255, 255, 255, 0.7);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.95rem;
+      font-weight: 500;
+      outline: none;
+      transition: var(--transition);
+    }
+
+    .form-group input::placeholder {
+      color: #b0a89e;
+    }
+
+    .form-group input:focus {
+      border-color: var(--accent);
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 0 0 3px rgba(226, 116, 25, 0.1);
+    }
+
+    /* Button */
+    .btn-login {
+      width: 100%;
+      padding: 15px;
+      font-family: inherit;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #fff;
+      background: linear-gradient(135deg, var(--accent), #c05e10);
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 20px var(--accent-glow);
+      margin-top: 8px;
+    }
+
+    .btn-login:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 28px rgba(226, 116, 25, 0.4);
+    }
+
+    .btn-login:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    .btn-login:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    /* Error */
+    .error-msg {
+      display: none;
+      margin-top: 16px;
+      padding: 12px 16px;
+      background: rgba(239, 68, 68, 0.06);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      border-radius: 10px;
+      color: #dc2626;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-align: center;
+      animation: fadeIn 0.3s;
+    }
+
+    /* Footer */
+    .login-footer {
+      text-align: center;
+      margin-top: 28px;
+      font-size: 0.75rem;
+      color: var(--muted);
+      opacity: 0.7;
+    }
+
+    /* Spinner */
+    .spinner-small {
+      width: 18px;
+      height: 18px;
+      border: 2.5px solid rgba(255, 255, 255, 0.3);
+      border-left-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      display: none;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Responsive */
+    @media (max-width: 520px) {
+      .login-card {
+        padding: 36px 24px 32px;
+      }
+      .brand-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 26px;
+      }
+      .brand h1 {
+        font-size: 1.35rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Soft glows -->
+  <div class="glow glow-1"></div>
+  <div class="glow glow-2"></div>
+  <div class="glow glow-3"></div>
+
+  <div class="login-container">
+    <div class="login-card">
+      <div class="brand">
+        <div class="brand-icon">🤖</div>
+        <h1>AI <span>Task Manager</span></h1>
+        <p>Multilingual Task Extraction Suite</p>
+      </div>
+
+      <form id="login-form" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" placeholder="you@company.com" required autocomplete="email" />
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" placeholder="Enter your password" required autocomplete="current-password" />
+        </div>
+
+        <button type="submit" class="btn-login" id="btn-login">
+          <span id="btn-text">Sign In</span>
+          <div class="spinner-small" id="btn-spinner"></div>
+        </button>
+
+        <div class="error-msg" id="error-msg"></div>
+      </form>
+
+      <div class="login-footer">
+        &copy; 2026 AI Task Suite &middot; Powered by OpenAI
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Check if already logged in
+    if (localStorage.getItem('auth_token')) {
+      window.location.href = '/app';
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const errorEl = document.getElementById('error-msg');
+      const btnText = document.getElementById('btn-text');
+      const spinner = document.getElementById('btn-spinner');
+      const btn = document.getElementById('btn-login');
+
+      // Reset
+      errorEl.style.display = 'none';
+      btn.disabled = true;
+      btnText.textContent = 'Signing in...';
+      spinner.style.display = 'inline-block';
+
+      try {
+        const res = await fetch('/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.detail || 'Invalid credentials');
+        }
+
+        // Store token and redirect
+        localStorage.setItem('auth_token', data.token);
+        localStorage.setItem('auth_email', email);
+        window.location.href = '/app';
+
+      } catch (err) {
+        errorEl.textContent = err.message;
+        errorEl.style.display = 'block';
+        btn.disabled = false;
+        btnText.textContent = 'Sign In';
+        spinner.style.display = 'none';
+
+        // Shake animation
+        const card = document.querySelector('.login-card');
+        card.style.animation = 'none';
+        card.offsetHeight; // trigger reflow
+        card.style.animation = 'shake 0.4s ease';
+      }
+    }
+
+    // Shake animation for errors
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        20% { transform: translateX(-8px); }
+        40% { transform: translateX(8px); }
+        60% { transform: translateX(-5px); }
+        80% { transform: translateX(5px); }
+      }
+    `;
+    document.head.appendChild(style);
+  </script>
+</body>
+
+</html>
